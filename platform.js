@@ -10,7 +10,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	gameUrl = "http://punk0706.github.io/SMGGomoku/game.html"
     //$log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
     //$window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
-    return;
+    //return;
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   var gotGameReady = false;
@@ -32,6 +32,10 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   $scope.$watch('playMode', function() {
     stateService.setPlayMode($scope.playMode);
   });
+  $scope.guestLogin = function (){
+	  $scope.displayName = "angie";
+	  $scope.avatarImageUrl = "avatar.png"
+  };
   function sendServerMessage(t, obj) {
       var type = t;
       serverApiService.sendMessage(obj, function (response) {
