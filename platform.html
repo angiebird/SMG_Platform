@@ -12,11 +12,22 @@
   <script src="platform.js"></script>
   <script src="platformMessageService.js"></script>
   <script src="stateService.js"></script>
+<<<<<<< Updated upstream
+=======
+  <script src="http://yoav-zibin.github.io/emulator/intercom.js"></script>
+  <script src="platform.js"></script>
+  <script src="http://yoav-zibin.github.io/emulator/platformMessageService.js"></script>
+  <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
+  <script src="http://yoav-zibin.github.io/emulator/serverApiService.js"></script>
+>>>>>>> Stashed changes
 </head>
 <body style="height:100%; width:100%; overflow: hidden;"
     ng-cloak ng-controller="PlatformCtrl">
   <div style="height:10%; overflow: hidden;">
     <button ng-click="startNewMatch()">New match</button>
+    <select id="gameList">
+      <option value="selectList" selected="selected">Please select a game from list</option>=
+    </select>
     <select ng-model="playMode">
       <option value="passAndPlay">Single-window Pass-and-play</option>
       <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>

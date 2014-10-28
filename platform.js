@@ -2,8 +2,8 @@
 
 angular.module('myApp', [])
 .controller('PlatformCtrl',
-function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService) {
-
+function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
+  getGames();
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
