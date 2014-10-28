@@ -7,8 +7,9 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
-    $log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
-    $window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
+  	gameUrl = "http://punk0706.github.io/SMGGomoku/game.html"
+    //$log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
+    //$window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
     return;
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
@@ -31,7 +32,29 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   $scope.$watch('playMode', function() {
     stateService.setPlayMode($scope.playMode);
   });
-
+  function sendServerMessage(t, obj) {
+      var type = t;
+      serverApiService.sendMessage(obj, function (response) {
+        processServerResponse(type, response);
+      });
+    };
+  function processServerResponse(type, resObj){
+  	if (type == 'GET_GAMES'){
+  		updateGameList(resObj);
+  	}
+  }
+  function getGames(){
+  	sendServerMessage('GET_GAMES', [{getGames: {}}]);
+  }
+  function updateGameList(obj){
+  	var gamesObj = obj[0].games;
+  	var gamelist = [];
+  	var i;
+  	for (i=0; i< gamesObj.length; i++){
+  		var g = {gameId: gamesObj[i].gameId, gamename: gamesObj[i].languageToGameName.en};
+  		gamelist.push(g)
+  	}
+  }
   platformMessageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {
       gotGameReady = true;
