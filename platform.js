@@ -4,14 +4,12 @@ angular.module('myApp', [])
 .controller('PlatformCtrl',
 function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
     getGames();
-    getMatches();
+    //getMatches();
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   var playerInfo = null;
-
   // Used to determine whether to hide match options or not
   $scope.hideMatchOptions = false;
-
   if (gameUrl === null) {
   		gameUrl = ""
   }
@@ -29,7 +27,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
      		$scope.developerEmail = $scope.availableGames[i].developerEmail;
      	}
      }
-     getMatches();
+     //getMatches();
   };
   $scope.matchSelected = function () {
       console.log("match selected");
@@ -86,6 +84,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   function getGames(){
   	sendServerMessage('GET_GAMES', [{getGames: {}}]);
   }
+  /*
   function getMatches() {
       if (playerInfo !== undefined)
       {
@@ -99,6 +98,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       }
       console.log("PLAYER INFO IS UNDEFINED");
   }
+  */
   function updateGameList(obj){
   	var gamesObj = obj[0].games;
   	var gamelist = [];
