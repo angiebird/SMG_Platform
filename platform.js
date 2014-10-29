@@ -7,14 +7,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
-<<<<<<< HEAD
-  	gameUrl = ""
-=======
-  	gameUrl = "http://punk0706.github.io/SMGGomoku/game.html"
-    //$log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
-    //$window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
-    //return;
->>>>>>> FETCH_HEAD
+  		gameUrl = ""
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   var gotGameReady = false;
