@@ -22,8 +22,8 @@
     ng-cloak ng-controller="PlatformCtrl">
   <div style="height:10%; overflow: hidden;">
     <button ng-click="startNewMatch()">New match</button>
-    <select id="gameList">
-      <option value="selectList" selected="selected">Please select a game from list</option>=
+    <select id="gameList" class="nullable" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
+      <option value="">Please select a game from list</option>
     </select>
     <select ng-model="playMode">
       <option value="passAndPlay">Single-window Pass-and-play</option>
