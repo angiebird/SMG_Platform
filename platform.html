@@ -20,12 +20,11 @@
 </head>
 <body style="height:100%; width:100%; overflow: hidden;"
     ng-cloak ng-controller="PlatformCtrl">
-    <div style="height:20%; overflow: hidden;">
+  <div style="height:20%; overflow: hidden;">
     <button ng-click="guestLogin()">Guest login</button>
     <textarea ng-model="displayName" rows=1 cols=20 readonly></textarea>
-    <textarea ng-model="avatarImageUrl" rows=1 cols=20 readonly></textarea>
-    </div>
-  <div style="height:10%; overflow: hidden;">
+    <img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
+    <br>
     <button ng-click="startNewMatch()">New match</button>
     <select id="gameList">
       <option value="selectList" selected="selected">Please select a game from list</option>=

@@ -6,6 +6,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   getGames();
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
+  var playerInfo = null;
+
   if (gameUrl === null) {
   	gameUrl = "http://punk0706.github.io/SMGGomoku/game.html"
     //$log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
@@ -33,8 +35,18 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     stateService.setPlayMode($scope.playMode);
   });
   $scope.guestLogin = function (){
-	  $scope.displayName = "angie";
-	  $scope.avatarImageUrl = "avatar.png"
+	  var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
+	  var rand = Math.floor(Math.random()*5);
+	  var name = avatarLs[rand] + Math.floor(Math.random()*1000);
+	  var img = "img/" + avatarLs[rand] + ".png";
+	  var obj = [{registerPlayer:{displayName: name, avatarImageUrl: img}}];
+
+	  sendServerMessage('REGISTER_PLAYER', obj);
+  };
+  function updatePlayerInfo(obj){
+	  playerInfo = obj[0].playerInfo;
+	  $scope.displayName = playerInfo.displayName;
+	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
   };
   function sendServerMessage(t, obj) {
       var type = t;
@@ -45,6 +57,9 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   function processServerResponse(type, resObj){
   	if (type == 'GET_GAMES'){
   		updateGameList(resObj);
+  	}
+  	else if(type == 'REGISTER_PLAYER'){
+  		updatePlayerInfo(resObj);
   	}
   }
   function getGames(){
