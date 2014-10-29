@@ -3,10 +3,14 @@
 angular.module('myApp', [])
 .controller('PlatformCtrl',
 function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
-  getGames();
+    getGames();
+    getMatches();
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   var playerInfo = null;
+
+  // Used to determine whether to hide match options or not
+  $scope.hideMatchOptions = false;
 
   if (gameUrl === null) {
   		gameUrl = ""
@@ -25,7 +29,12 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
      		$scope.developerEmail = $scope.availableGames[i].developerEmail;
      	}
      }
+     getMatches();
   };
+  $scope.matchSelected = function () {
+      console.log("match selected");
+      // Need to do something after a match is selected
+  }
   $scope.getStatus = function () {
     if (!gotGameReady) {
       return "Waiting for 'gameReady' message from the game...";
@@ -70,9 +79,25 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	else if(type == 'REGISTER_PLAYER'){
   		updatePlayerInfo(resObj);
   	}
+  	else if (type == 'GET_MATCHES') {
+  	    updateMatchList(resObj);
+  	}
   }
   function getGames(){
   	sendServerMessage('GET_GAMES', [{getGames: {}}]);
+  }
+  function getMatches() {
+      if (playerInfo !== undefined)
+      {
+          console.log("PLAYER INFO IS DEFINED");
+          sendServerMessage('GET_MATCHES', [{
+              reserveAutoMatch: {
+                  tokens: 0, numberOfPlayers: 2, gameId: $scope.selectedGame,
+                  myPlayerId: playerInfo.displayName, accessSignature: playerInfo.accessSignature
+              }
+          }]);
+      }
+      console.log("PLAYER INFO IS UNDEFINED");
   }
   function updateGameList(obj){
   	var gamesObj = obj[0].games;
@@ -83,6 +108,15 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   		gamelist.push(g)
   	}
   	$scope.availableGames = gamelist;
+  }
+  function updateMatchList(obj) {
+      var matchesObj = obj[0].matches;
+      var matchList = [];
+      for (var i = 0; i < matchesObj.length; i++) {
+          var match = {id: i/*get data from the message response*/};  
+      matchList.push(match);
+      }
+      $scope.availableMatches = matchList;
   }
   platformMessageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {

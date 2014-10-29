@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" ng-app="myApp">
 <head>
   <meta charset="utf-8">
@@ -28,6 +28,10 @@
     <button ng-click="startNewMatch()">New match</button>
     <select id="gameList" class="nullable" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
       <option value="">Please select a game from list</option>
+    </select>
+    <button ng-click="autoMatch()">Start auto match</button>
+    <select id="matchList" class="nullable" ng-options="match.id for match in availableMatches" ng-model="selectedMatch" ng-change="matchSelected()">
+        <option value="">List of available multiplayer matches</option>
     </select>
     <select ng-model="playMode">
       <option value="passAndPlay">Single-window Pass-and-play</option>
