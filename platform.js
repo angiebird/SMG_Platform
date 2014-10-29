@@ -47,13 +47,15 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 	  var name = avatarLs[rand] + Math.floor(Math.random()*1000);
 	  var img = "img/" + avatarLs[rand] + ".png";
 	  var obj = [{registerPlayer:{displayName: name, avatarImageUrl: img}}];
-
 	  sendServerMessage('REGISTER_PLAYER', obj);
   };
   function updatePlayerInfo(obj){
 	  playerInfo = obj[0].playerInfo;
 	  $scope.displayName = playerInfo.displayName;
 	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	  $scope.myPlayerId = playerInfo.myPlayerId;
+	  $scope.myAccessSignature = playerIndo.myAccessSignature;
+	  $scope.myTokens = playerInfor.tokens;
   };
   function sendServerMessage(t, obj) {
       var type = t;
