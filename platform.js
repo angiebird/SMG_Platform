@@ -7,7 +7,20 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     //getMatches();
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
+
   var playerInfo = null;
+
+  //Check browser support
+  if (typeof(Storage) != "undefined") {
+      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+      //console.log("playerInfo" + localStorage.getItem("playerInfo"));
+	  $scope.displayName = playerInfo.displayName;
+	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	  $scope.myPlayerId = playerInfo.myPlayerId;
+	  $scope.myAccessSignature = playerInfo.myAccessSignature;
+	  $scope.myTokens = playerInfo.tokens;
+  };
+
   // Used to determine whether to hide match options or not
   $scope.hideMatchOptions = false;
   if (gameUrl === null) {
@@ -58,11 +71,14 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   };
   function updatePlayerInfo(obj){
 	  playerInfo = obj[0].playerInfo;
+	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
+      //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
+
 	  $scope.displayName = playerInfo.displayName;
 	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
 	  $scope.myPlayerId = playerInfo.myPlayerId;
-	  $scope.myAccessSignature = playerIndo.myAccessSignature;
-	  $scope.myTokens = playerInfor.tokens;
+	  $scope.myAccessSignature = playerInfo.myAccessSignature;
+	  $scope.myTokens = playerInfo.tokens;
   };
   function sendServerMessage(t, obj) {
       var type = t;
