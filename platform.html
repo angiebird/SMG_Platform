@@ -24,6 +24,8 @@
     <button ng-click="guestLogin()">Guest login</button>
     <textarea ng-model="displayName" rows=1 cols=20 readonly></textarea>
     <img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
+    <textarea ng-model="displayName2" rows=1 cols=20 readonly></textarea>
+    <img src={{avatarImageUrl2}} alt="HTML5 Icon" width="50" height="50">
     <br>
     <button ng-click="startNewMatch()">New match</button>
     <select id="gameList" class="nullable" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
@@ -33,7 +35,7 @@
     <select id="matchList" class="nullable" ng-options="match.id for match in availableMatches" ng-model="selectedMatch" ng-change="matchSelected()">
         <option value="">List of available multiplayer matches</option>
     </select>
-    <select ng-model="playMode">
+    <select ng-model="playMode" ng-change="updateOpponent()">
       <option value="passAndPlay">Single-window Pass-and-play</option>
       <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>
       <option value="playWhite">Multi-window play White</option>

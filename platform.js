@@ -10,16 +10,30 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 
   var playerInfo = null;
 
+  $scope.avatarImageUrl = "img/unknown.png";
+  $scope.avatarImageUrl2 = "img/unknown.png";
+
   //Check browser support
-  if (typeof(Storage) != "undefined") {
-      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-      //console.log("playerInfo" + localStorage.getItem("playerInfo"));
-	  $scope.displayName = playerInfo.displayName;
-	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	  $scope.myPlayerId = playerInfo.myPlayerId;
-	  $scope.myAccessSignature = playerInfo.myAccessSignature;
-	  $scope.myTokens = playerInfo.tokens;
+  $scope.updatePlayer = function(){
+	  if (typeof(Storage) != "undefined") {
+          playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+          //console.log("playerInfo" + localStorage.getItem("playerInfo"));
+	      $scope.displayName = playerInfo.displayName;
+	      $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	      $scope.myPlayerId = playerInfo.myPlayerId;
+	      $scope.myAccessSignature = playerInfo.myAccessSignature;
+	      $scope.myTokens = playerInfo.tokens;
+	  }
+  }
+  $scope.updatePlayer();
+  
+  $scope.updateOpponent = function(){
+	  if($scope.playMode == "playAgainstTheComputer"){
+	      $scope.displayName2 = "computer";
+	      $scope.avatarImageUrl2 = "img/computer.png";
+	  }
   };
+  $scope.updateOpponent();
 
   // Used to determine whether to hide match options or not
   $scope.hideMatchOptions = false;
@@ -73,12 +87,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 	  playerInfo = obj[0].playerInfo;
 	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
       //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
-
-	  $scope.displayName = playerInfo.displayName;
-	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	  $scope.myPlayerId = playerInfo.myPlayerId;
-	  $scope.myAccessSignature = playerInfo.myAccessSignature;
-	  $scope.myTokens = playerInfo.tokens;
+	  $scope.updatePlayer();
   };
   function sendServerMessage(t, obj) {
       var type = t;
