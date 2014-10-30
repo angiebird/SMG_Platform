@@ -354,6 +354,7 @@ angular.module('myApp')
     get(game, "updateUI");
 
     init();
+
     var intercom = getIntercom();
     if (intercom != null) {
       intercom.on('broadcastUpdateUi', gotBroadcastUpdateUi);
@@ -362,6 +363,7 @@ angular.module('myApp')
         setMatchState(angular.fromJson(matchState));
       }
     }
+    
     sendUpdateUi();
   }
 
@@ -370,4 +372,5 @@ angular.module('myApp')
   this.startNewMatch = startNewMatch;
   this.setPlayMode = setPlayMode;
   this.getMatchState = getMatchState;
+  this.gotBroadcastUpdateUi = gotBroadcastUpdateUi;
 });

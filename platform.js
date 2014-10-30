@@ -5,6 +5,9 @@ angular.module('myApp', [])
 function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
     getGames();
     //getMatches();
+  var isFirstMove = true;
+  var myLastMove;
+  var myMatchId = "";
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
 
@@ -44,6 +47,10 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   var gotGameReady = false;
   $scope.startNewMatch = function () {
     stateService.startNewMatch();
+    if($scope.playMode === 'playBlack'){
+    var resMatchObj = [{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, accessSignature:$scope.myAccessSignature}}];
+    sendServerMessage('RESERVE_ MATCH', resMatchObj);
+    }
   };
   $scope.gameSelected = function(){
      console.log("game Selected");
@@ -85,9 +92,17 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   };
   function updatePlayerInfo(obj){
 	  playerInfo = obj[0].playerInfo;
+<<<<<<< Updated upstream
 	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
       //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
 	  $scope.updatePlayer();
+=======
+	  $scope.displayName = playerInfo.displayName;
+	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	  $scope.myPlayerId = playerInfo.myPlayerId;
+	  $scope.myAccessSignature = playerInfo.accessSignature;
+	  $scope.myTokens = playerInfo.tokens;
+>>>>>>> Stashed changes
   };
   function sendServerMessage(t, obj) {
       var type = t;
@@ -143,7 +158,39 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       }
       $scope.availableMatches = matchList;
   }
+  function isEqual(object1, object2) {
+	return JSON.stringify(object1) === JSON.stringify(object2);
+  }
+  function formatStateObject(obj){
+  	var stateObj;
+  	var indexBefore;
+  	var indexAfter;
+  	if (obj.move[0].setTurn.turnIndex === 1){
+  		indexBefore = 0;
+  		indexAfter = 1
+  	}
+  	else{
+  		indexBefore = 1;
+  		indexAfter = 0;
+  	}
+  	var cState = {board: obj.move[1].set, delta: obj.move[2].set};
+  	stateObj = {turnIndexBeforeMove : indexBefore, turnIndex: indexAfter, endMatchScores: null, currentState: cState, lastMove: obj.move, lastVisibleTo:{}, currentVisibleTo:{}, lastState:{}};
+  	return stateObj
+  }
   platformMessageService.addMessageListener(function (message) {
+  	if (message.reply !== undefined){
+  		var replyObj = message.reply;
+  		if (replyObj[0].matches !== undefined){
+  			var matchObj = (message.reply)[0].matches[0];
+  			if (myMatchId !== matchObj.matchId){
+  			myMatchId = matchObj.matchId
+  			}
+  			if (myLastMove === undefined || !isEqual(myLastMove, matchObj.newMatch.move)){
+  				stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch));
+  			}
+  		}
+  	}
+  	else{
     if (message.gameReady !== undefined) {
       gotGameReady = true;
       var game = message.gameReady;
@@ -161,6 +208,19 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       }
     } else if (message.makeMove !== undefined) {
       stateService.makeMove(message.makeMove);
+      myLastMove = message.makeMove;
+      if ($scope.playMode !== 'passAndPlay' && $scope.playMode !== 'playAgainstTheComputer'){
+      	if(isFirstMove && $scope.playMode === 'playWhite'){
+            var newMatchObj = [{newMatch: {gameId: $scope.selectedGame, tokens: 0, move: message.makeMove, startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
+      		sendServerMessage('NEW_MATCHES', newMatchObj);
+      		isFirstMove = false;
+      	}
+      	else{
+      		var moveObj = [{madeMove: {matchId:myMatchId, move: message.makeMove, moveNumber: 1, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
+      		sendServerMessage('MADE_MOVE', moveObj);
+      	}
+       }
+     }
     }
   });
 });
