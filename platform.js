@@ -68,7 +68,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   $scope.gameSelected = function(){
      console.log("game Selected");
      var i;
-     for (i = 1; i < $scope.availableGames.length; i++){
+     for (i = 0; i < $scope.availableGames.length; i++){
      	if ($scope.selectedGame === $scope.availableGames[i].gameId){
      		$scope.gameUrl = $sce.trustAsResourceUrl($scope.availableGames[i].gameUrl);
      		$scope.developerEmail = $scope.availableGames[i].developerEmail;
