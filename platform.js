@@ -92,17 +92,9 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   };
   function updatePlayerInfo(obj){
 	  playerInfo = obj[0].playerInfo;
-<<<<<<< Updated upstream
 	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
       //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
 	  $scope.updatePlayer();
-=======
-	  $scope.displayName = playerInfo.displayName;
-	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	  $scope.myPlayerId = playerInfo.myPlayerId;
-	  $scope.myAccessSignature = playerInfo.accessSignature;
-	  $scope.myTokens = playerInfo.tokens;
->>>>>>> Stashed changes
   };
   function sendServerMessage(t, obj) {
       var type = t;
