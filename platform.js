@@ -21,11 +21,13 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 	  if (typeof(Storage) != "undefined") {
           playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
           //console.log("playerInfo" + localStorage.getItem("playerInfo"));
-	      $scope.displayName = playerInfo.displayName;
-	      $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	      $scope.myPlayerId = playerInfo.myPlayerId;
-	      $scope.myAccessSignature = playerInfo.myAccessSignature;
-	      $scope.myTokens = playerInfo.tokens;
+          if(playerInfo != null){
+        	  $scope.displayName = playerInfo.displayName;
+	    	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	    	  $scope.myPlayerId = playerInfo.myPlayerId;
+	    	  $scope.myAccessSignature = playerInfo.myAccessSignature;
+	    	  $scope.myTokens = playerInfo.tokens;
+          }
 	  }
   }
   $scope.updatePlayer();
