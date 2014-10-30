@@ -253,7 +253,12 @@ angular.module('myApp')
     turnIndex = data.turnIndex;
     endMatchScores = data.endMatchScores;
     lastMove = data.lastMove;
-    lastState = data.lastState;
+    if(data.lastState === undefined){
+    	lastState = currentState;
+    }
+    else{
+    	lastState = data.lastState;
+    }
     currentState = data.currentState;
     lastVisibleTo = data.lastVisibleTo;
     currentVisibleTo = data.currentVisibleTo;

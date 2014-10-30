@@ -17,6 +17,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     //getMatches();
   var isFirstMove = true;
   var myLastMove;
+  var myLastState;
   var myMatchId = "";
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
@@ -193,7 +194,9 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   		indexAfter = 0;
   	}
   	var cState = {board: obj.move[1].set, delta: obj.move[2].set};
-  	stateObj = {turnIndexBeforeMove : indexBefore, turnIndex: indexAfter, endMatchScores: null, currentState: cState, lastMove: obj.move, lastVisibleTo:{}, currentVisibleTo:{}, lastState:{}};
+  	var lState;
+  	stateObj = {turnIndexBeforeMove : indexBefore, turnIndex: indexAfter, endMatchScores: null, currentState: cState, lastMove: obj.move, lastVisibleTo:{}, currentVisibleTo:{}};
+  	myLastState = cState;
   	return stateObj
   }
   platformMessageService.addMessageListener(function (message) {
