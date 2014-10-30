@@ -127,7 +127,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	}
   }
   function getGames(){
-  	sendServerMessage('GET_GAMES', [{getGames: {}}]);
+  	sendServerMessage('GET_GAMES', [{getGames: {gameId: "5682617542246400"}}]);
   }
   /*
   function getMatches() {
