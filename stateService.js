@@ -56,7 +56,8 @@ angular.module('myApp')
 
   function startNewMatch() {
     init();
-    broadcastUpdateUi();
+    //broadcastUpdateUi();
+    sendUpdateUi();
   }
 
   //Function to get the keys from a JSON object
@@ -264,7 +265,7 @@ angular.module('myApp')
     }
     return null;
   }
-
+/*
   function broadcastUpdateUi() {
     var matchState = getMatchState();
     var intercom = getIntercom();
@@ -275,7 +276,7 @@ angular.module('myApp')
       sendUpdateUi();
     }
   }
-
+*/
   function gotBroadcastUpdateUi(data) {
     $log.info("gotBroadcastUpdateUi:", data);
     setMatchState(data);
@@ -339,7 +340,8 @@ angular.module('myApp')
     if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
       throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
     }
-    broadcastUpdateUi();
+    //broadcastUpdateUi();
+    sendUpdateUi();
   };
 
   function setGame(_game) {
@@ -352,18 +354,8 @@ angular.module('myApp')
     get(game, "maxNumberOfPlayers");
     get(game, "isMoveOk");
     get(game, "updateUI");
-
     init();
-
-    var intercom = getIntercom();
-    if (intercom != null) {
-      intercom.on('broadcastUpdateUi', gotBroadcastUpdateUi);
-      var matchState = $window.localStorage.getItem($window.location.toString());
-      if (!isNull(matchState)) {
-        setMatchState(angular.fromJson(matchState));
-      }
-    }
-    
+    setMatchState({turnIndexBeforeMove:0,turnIndex:0,endMatchScores:null,lastMove:[],lastState:null,currentState:{},lastVisibleTo:null,currentVisibleTo:{}});
     sendUpdateUi();
   }
 
