@@ -36,7 +36,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
         	  $scope.displayName = playerInfo.displayName;
 	    	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
 	    	  $scope.myPlayerId = playerInfo.myPlayerId;
-	    	  $scope.myAccessSignature = playerInfo.myAccessSignature;
+	    	  $scope.myAccessSignature = playerInfo.accessSignature;
 	    	  $scope.myTokens = playerInfo.tokens;
           }
 	  }
