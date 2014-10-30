@@ -97,6 +97,11 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
       //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
 	  $scope.updatePlayer();
+	  $scope.displayName = playerInfo.displayName;
+	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	  $scope.myPlayerId = playerInfo.myPlayerId;
+	  $scope.myAccessSignature = playerInfo.accessSignature;
+	  $scope.myTokens = playerInfo.tokens;
   };
   function sendServerMessage(t, obj) {
       var type = t;
@@ -153,7 +158,21 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       $scope.availableMatches = matchList;
   }
   function isEqual(object1, object2) {
-	return JSON.stringify(object1) === JSON.stringify(object2);
+  	var obj1Str = JSON.stringify(object1);
+  	var obj2Str = JSON.stringify(object2);
+	return obj1Str === obj2Str;
+  }
+  function formatMoveObject(obj){
+  	var moveObj = [];
+  	if(obj.length === 3){
+  		if(obj[0].setTurn !== undefined && obj[1].set !== undefined && obj[2].set !== undefined){
+  			moveObj.push({setTurn:{turnIndex:obj[0].setTurn.turnIndex}});
+  			moveObj.push({set:{key:"board", value:obj[1].set.value}});
+  			moveObj.push({set:{key:"delta", value:obj[2].set.value}});
+  			return moveObj
+  			}
+  	}
+  	return false;
   }
   function formatStateObject(obj){
   	var stateObj;
@@ -179,7 +198,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   			if (myMatchId !== matchObj.matchId){
   			myMatchId = matchObj.matchId
   			}
-  			if (myLastMove === undefined || !isEqual(myLastMove, matchObj.newMatch.move)){
+  			if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))){
   				stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch));
   			}
   		}
