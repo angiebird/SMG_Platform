@@ -1,5 +1,15 @@
 'use strict';
 
+angular.module('myApp', []).config(function($provide) {
+    $provide.decorator("$exceptionHandler", function($delegate) {
+		return function(exception, cause) {
+			$delegate(exception, cause);
+            alert(exception.message);
+		    //var obj = [{emailJavaScriptError: {gameDeveloperEmail: $scope.developerEmail, emailSubject: "error", emailBody: e}}];
+		};
+	});
+});
+
 angular.module('myApp', [])
 .controller('PlatformCtrl',
 function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
@@ -15,6 +25,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 
   $scope.avatarImageUrl = "img/unknown.png";
   $scope.avatarImageUrl2 = "img/unknown.png";
+  
 
   //Check browser support
   $scope.updatePlayer = function(){
