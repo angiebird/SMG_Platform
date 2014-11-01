@@ -15,8 +15,10 @@ angular.module('myApp', [])
 function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
     getGames();
     //getMatches();
-  var isFirstMove = true;
   var myLastMove;
+  var myTurnIndex = 0;
+  var numOfMove = 0;
+  var AutoGameRefresher;
   var myLastState;
   var myMatchId = "";
   var platformUrl = $window.location.search;
@@ -63,7 +65,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     stateService.startNewMatch();
     if($scope.playMode === 'playBlack'){
     var resMatchObj = [{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, accessSignature:$scope.myAccessSignature}}];
-    sendServerMessage('RESERVE_ MATCH', resMatchObj);
+    sendServerMessage('RESERVE_MATCH', resMatchObj);
+    myTurnIndex = 1;
     }
   };
   $scope.gameSelected = function(){
@@ -117,14 +120,20 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       });
     };
   function processServerResponse(type, resObj){
-  	if (type == 'GET_GAMES'){
+  	if (type === 'GET_GAMES'){
   		updateGameList(resObj);
   	}
-  	else if(type == 'REGISTER_PLAYER'){
+  	else if(type === 'REGISTER_PLAYER'){
   		updatePlayerInfo(resObj);
   	}
-  	else if (type == 'GET_MATCHES') {
+  	else if (type === 'GET_MATCHES') {
   	    updateMatchList(resObj);
+  	}
+  	else if (type === 'CHECK_UPDATE') {
+  		handleUpdates(resObj);
+  	}
+  	else if (type === 'NEW_MATCH' || type === 'RESERVE_MATCH'){
+  		handleResAutoMatch(resObj);
   	}
   }
   function getGames(){
@@ -185,61 +194,98 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	var stateObj;
   	var indexBefore;
   	var indexAfter;
-  	if (obj.move[0].setTurn.turnIndex === 1){
-  		indexBefore = 0;
-  		indexAfter = 1
+  	if(obj[0].setTurn !== undefined){
+  		if (obj[0].setTurn.turnIndex === 1){
+  			indexBefore = 0;
+  			indexAfter = 1
+  		}
+  		else{
+  			indexBefore = 1;
+  			indexAfter = 0;
+  		}
+  		var cState = {board: obj[1].set.value, delta: obj[2].set.value};
+  		var lState;
+  		stateObj = {turnIndexBeforeMove : indexBefore, turnIndex: indexAfter, endMatchScores: null, currentState: cState, lastMove: obj, lastVisibleTo:{}, currentVisibleTo:{}};
+  		myLastState = cState;
+  		return stateObj;
   	}
-  	else{
-  		indexBefore = 1;
-  		indexAfter = 0;
+  	else if(obj[0].endMatch !== undefined){
+  		var indexBeforeMove = 0
+  		if (myTurnIndex === 0){
+  			var indexBeforeMove = 1;
+  		}
+  		var cState = {board: obj[1].set.value, delta: obj[2].set.value};
+  		stateObj = {turnIndexBeforeMove : indexBeforeMove, turnIndex: myTurnIndex, endMatchScores: obj[0].endMatch.endMatchScores, currentState: cState, lastMove: obj, lastVisibleTo:{}, currentVisibleTo:{}};
+  		return stateObj;
   	}
-  	var cState = {board: obj.move[1].set, delta: obj.move[2].set};
-  	var lState;
-  	stateObj = {turnIndexBeforeMove : indexBefore, turnIndex: indexAfter, endMatchScores: null, currentState: cState, lastMove: obj.move, lastVisibleTo:{}, currentVisibleTo:{}};
-  	myLastState = cState;
-  	return stateObj
   }
-  platformMessageService.addMessageListener(function (message) {
-  	if (message.reply !== undefined){
-  		var replyObj = message.reply;
-  		if (replyObj[0].matches !== undefined){
-  			var matchObj = (message.reply)[0].matches[0];
-  			if (myMatchId !== matchObj.matchId){
-  			myMatchId = matchObj.matchId
-  			}
-  			if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))){
-  				stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch));
+  function checkGameUpdates(){
+  	var resMatchObj = [{getPlayerMatches: {gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, getCommunityMatches: false, accessSignature:$scope.myAccessSignature}}];
+    sendServerMessage('CHECK_UPDATE', resMatchObj);
+  }
+  function handleResAutoMatch (message) {
+  	if (message[0].matches !== undefined){
+  		var matchObj = message[0].matches[0];
+  		if (myMatchId !== matchObj.matchId){
+  			myMatchId = matchObj.matchId;
+  		}
+  		if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))){
+  			stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
+  		}
+  	}
+  }
+  function handleUpdates (message){
+  	if (message[0].matches !== undefined){
+  		var matchObj = message[0].matches;
+  		var i;
+  		for(i = 0; i < matchObj.length; i++){
+  			if (myMatchId === matchObj[i].matchId){
+  				var movesObj = matchObj[i].history.moves;
+  				if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length-1]))){
+  					stateService.gotBroadcastUpdateUi(formatStateObject(movesObj[movesObj.length-1]));
+  					myLastMove = movesObj[movesObj.length-1];
+  					numOfMove = numOfMove + 1;
+  				}
   			}
   		}
   	}
-  	else{
-    if (message.gameReady !== undefined) {
-      gotGameReady = true;
-      var game = message.gameReady;
-      game.isMoveOk = function (params) {
-        platformMessageService.sendMessage({isMoveOk: params});
-        return true;
-      };
-      game.updateUI = function (params) {
+  }
+  platformMessageService.addMessageListener(function (message) {
+  	//this function only handles local messages, server messages will be filtered out
+  	if (message.reply === undefined){
+    	if (message.gameReady !== undefined) {
+      		gotGameReady = true;
+      		var game = message.gameReady;
+      		game.isMoveOk = function (params) {
+        	platformMessageService.sendMessage({isMoveOk: params});
+        	return true;
+      	};
+      	game.updateUI = function (params) {
         platformMessageService.sendMessage({updateUI: params});
-      };
-      stateService.setGame(game);
-    } else if (message.isMoveOkResult !== undefined) {
-      if (message.isMoveOkResult !== true) {
-        $window.alert("isMoveOk returned " + message.isMoveOkResult);
-      }
-    } else if (message.makeMove !== undefined) {
-      stateService.makeMove(message.makeMove);
-      myLastMove = message.makeMove;
-      if ($scope.playMode !== 'passAndPlay' && $scope.playMode !== 'playAgainstTheComputer'){
-      	if(isFirstMove && $scope.playMode === 'playWhite'){
-            var newMatchObj = [{newMatch: {gameId: $scope.selectedGame, tokens: 0, move: message.makeMove, startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
-      		sendServerMessage('NEW_MATCHES', newMatchObj);
-      		isFirstMove = false;
+      	};
+      	stateService.setGame(game);
+    	} else if (message.isMoveOkResult !== undefined) {
+      	if (message.isMoveOkResult !== true) {
+        	$window.alert("isMoveOk returned " + message.isMoveOkResult);
+      	}
+    	} else if (message.makeMove !== undefined) {
+      		stateService.makeMove(message.makeMove);
+      		myLastMove = message.makeMove;
+      		if ($scope.playMode !== 'passAndPlay' && $scope.playMode !== 'playAgainstTheComputer'){
+      			if(!numOfMove && $scope.playMode === 'playWhite'){
+            	var newMatchObj = [{newMatch: {gameId: $scope.selectedGame, tokens: 0, move: message.makeMove, startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
+      			sendServerMessage('NEW_MATCH', newMatchObj);
+      		if (AutoGameRefresher === undefined){
+      			AutoGameRefresher = setInterval(function () {checkGameUpdates()}, 10000);
+      		}
       	}
       	else{
-      		var moveObj = [{madeMove: {matchId:myMatchId, move: message.makeMove, moveNumber: 1, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
+      		numOfMove = numOfMove + 1;
+      		var moveObj = [{madeMove: {matchId:myMatchId, move: message.makeMove, moveNumber: numOfMove, myPlayerId:$scope.myPlayerId,accessSignature:$scope.myAccessSignature}}];
       		sendServerMessage('MADE_MOVE', moveObj);
+      		if (AutoGameRefresher === undefined){
+      			AutoGameRefresher = setInterval(function () {checkGameUpdates()}, 10000);
+      		}	
       	}
        }
      }

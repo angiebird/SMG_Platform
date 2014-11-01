@@ -4,7 +4,8 @@ angular.module('myApp')
 .service('platformMessageService', function($window, $log, $rootScope) {
   this.sendMessage = function (message) {
     $log.info("Platform sent message", message);
-    $window.document.getElementById("game_iframe").contentWindow.postMessage(
+    var iframeObj = $window.document.getElementById("game_iframe");
+    iframeObj.contentWindow.postMessage(
       message, "*");
   };
   this.addMessageListener = function (listener) {
