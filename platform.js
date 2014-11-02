@@ -46,10 +46,15 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   }
   $scope.updatePlayer();
   
-  $scope.updateOpponent = function(){
+  $scope.updateOpponent = function(name, imageUrl){
 	  if($scope.playMode == "playAgainstTheComputer"){
 	      $scope.displayName2 = "computer";
 	      $scope.avatarImageUrl2 = "img/computer.png";
+	  }
+	  else if (name !== undefined && imageUrl !== undefined)
+	  {
+	      $scope.displayName2 = name;
+	      $scope.avatarImageUrl2 = imageUrl;
 	  }
   };
   $scope.updateOpponent();
@@ -233,6 +238,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   			stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
   		}
   	}
+  	$scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
   }
   function handleUpdates (message){
   	if (message[0].matches !== undefined){
