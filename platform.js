@@ -238,7 +238,11 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   			stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
   		}
   	}
-  	$scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
+    // update opponent name and avatar
+  	if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
+  	    $scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
+  	else
+  	    $scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
   }
   function handleUpdates (message){
   	if (message[0].matches !== undefined){
@@ -254,6 +258,12 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   				}
   			}
   		}
+    // update opponent name and avatar
+  	if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
+  		$scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
+  	else
+  		$scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
+    
   	}
   }
   platformMessageService.addMessageListener(function (message) {
