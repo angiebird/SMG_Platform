@@ -28,6 +28,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 
   $scope.avatarImageUrl = "img/unknown.png";
   $scope.avatarImageUrl2 = "img/unknown.png";
+
+  var colorSetAlready = false;       // set once at beginning of a game to determine if you should be the black player
   
 
   //Check browser support
@@ -59,20 +61,23 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   };
   $scope.updateOpponent();
 
-  // Used to determine whether to hide match options or not
-  $scope.hideMatchOptions = false;
   if (gameUrl === null) {
   		gameUrl = ""
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   var gotGameReady = false;
+  // Starts a local game.  e.g. pass-and-play
   $scope.startNewMatch = function () {
-    stateService.startNewMatch();
-    if($scope.playMode === 'playBlack'){
-    var resMatchObj = [{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, accessSignature:$scope.myAccessSignature}}];
-    sendServerMessage('RESERVE_MATCH', resMatchObj);
-    myTurnIndex = 1;
-    }
+      stateService.startNewMatch();
+  };
+  // Starts a multiplayer game
+  $scope.autoMatch = function () {
+      stateService.startNewMatch();
+
+      $scope.playMode = 'playWhite';
+      var resMatchObj = [{ reserveAutoMatch: { tokens: 0, numberOfPlayers: 2, gameId: $scope.selectedGame, myPlayerId: $scope.myPlayerId, accessSignature: $scope.myAccessSignature } }];
+      sendServerMessage('RESERVE_MATCH', resMatchObj);
+
   };
   $scope.gameSelected = function(){
      console.log("game Selected");
@@ -228,8 +233,19 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	var resMatchObj = [{getPlayerMatches: {gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, getCommunityMatches: false, accessSignature:$scope.myAccessSignature}}];
     sendServerMessage('CHECK_UPDATE', resMatchObj);
   }
-  function handleResAutoMatch (message) {
-  	if (message[0].matches !== undefined){
+  
+  function handleResAutoMatch(message) {
+    // If there is an existing game, then you play black
+      if (message[0].matches[0] !== undefined) {
+          console.log("            >>> ENTERED <<<              ");
+          $log.info(message[0].matches);
+        if (colorSetAlready === false)
+        {
+            $scope.playMode = 'playBlack';
+            myTurnIndex = 1;
+            colorSetAlready = true;
+        }
+
   		var matchObj = message[0].matches[0];
   		if (myMatchId !== matchObj.matchId){
   			myMatchId = matchObj.matchId;
@@ -237,13 +253,20 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   		if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))){
   			stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
   		}
-  	}
-    // update opponent name and avatar
-  	if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
-  	    $scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
-  	else
-  	    $scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
-  }
+
+  		if (message[0].matches[0].playersInfo[0] != null && message[0].matches[0].playersInfo[1] != null)
+  		{
+  		    // update opponent name and avatar
+  		    if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
+  		        $scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
+  		    else
+  		        $scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
+
+  		}
+        }
+
+      colorSetAlready = true;   // You are white
+    }
   function handleUpdates (message){
   	if (message[0].matches !== undefined){
   		var matchObj = message[0].matches;
@@ -258,12 +281,14 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   				}
   			}
   		}
-    // update opponent name and avatar
-  	if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
-  		$scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
-  	else
-  		$scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
-    
+  		if (message[0].matches[0].playersInfo[0] != null && message[0].matches[0].playersInfo[1] != null)
+  		{
+  		    // update opponent name and avatar
+  		    if ($scope.displayName === message[0].matches[0].playersInfo[0].displayName)
+  		        $scope.updateOpponent(message[0].matches[0].playersInfo[1].displayName, message[0].matches[0].playersInfo[1].avatarImageUrl);
+  		    else
+  		        $scope.updateOpponent(message[0].matches[0].playersInfo[0].displayName, message[0].matches[0].playersInfo[0].avatarImageUrl);
+  		}
   	}
   }
   platformMessageService.addMessageListener(function (message) {
