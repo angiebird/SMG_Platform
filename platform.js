@@ -32,21 +32,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   var colorSetAlready = false;       // set once at beginning of a game to determine if you should be the black player
   
 
-  //Check browser support
-  $scope.updatePlayer = function(){
-	  if (typeof(Storage) != "undefined") {
-          playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-          //console.log("playerInfo" + localStorage.getItem("playerInfo"));
-          if(playerInfo != null){
-        	  $scope.displayName = playerInfo.displayName;
-	    	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	    	  $scope.myPlayerId = playerInfo.myPlayerId;
-	    	  $scope.myAccessSignature = playerInfo.accessSignature;
-	    	  $scope.myTokens = playerInfo.tokens;
-          }
-	  }
-  }
-  $scope.updatePlayer();
+  //updatePlayer();
+  guestLogin();
   
   $scope.updateOpponent = function(name, imageUrl){
 	  if($scope.playMode == "playAgainstTheComputer"){
@@ -109,7 +96,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   $scope.$watch('playMode', function() {
     stateService.setPlayMode($scope.playMode);
   });
-  $scope.guestLogin = function (){
+  function guestLogin(){
 	  var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
 	  var rand = Math.floor(Math.random()*5);
 	  var name = avatarLs[rand] + Math.floor(Math.random()*1000);
@@ -117,11 +104,27 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
 	  var obj = [{registerPlayer:{displayName: name, avatarImageUrl: img}}];
 	  sendServerMessage('REGISTER_PLAYER', obj);
   };
+
+  function updatePlayer(){
+	  //Check browser support
+	  if (typeof(Storage) != "undefined") {
+          playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+          //console.log("playerInfo" + localStorage.getItem("playerInfo"));
+          if(playerInfo != null){
+        	  $scope.displayName = playerInfo.displayName;
+	    	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+	    	  $scope.myPlayerId = playerInfo.myPlayerId;
+	    	  $scope.myAccessSignature = playerInfo.accessSignature;
+	    	  $scope.myTokens = playerInfo.tokens;
+          }
+	  }
+  };
+
   function updatePlayerInfo(obj){
 	  playerInfo = obj[0].playerInfo;
 	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
       //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
-	  $scope.updatePlayer();
+	  updatePlayer();
   };
   function sendServerMessage(t, obj) {
       var type = t;
