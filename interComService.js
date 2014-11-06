@@ -10,7 +10,7 @@ angular.module('myApp')
 	var gameList = [];
 	function setUser(obj){
 		if (obj.displayName !== undefined){
-			user.dispayName = obj.displayName;
+			user.displayName = obj.displayName;
 		}
 		if (obj.playerId !== undefined){
 			user.playerId = obj.playerId;
