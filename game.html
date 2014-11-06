@@ -1,9 +1,11 @@
 <div>
-<div>{{getStatus()}}</div>
-<textarea ng-model="displayName" rows=1 cols=20 readonly></textarea>
+	<div>{{getStatus()}}</div>
+	<textarea ng-model="displayName" rows=1 cols=20 readonly></textarea>
     <img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
     <textarea ng-model="displayName2" rows=1 cols=20 readonly></textarea>
     <img src={{avatarImageUrl2}} alt="HTML5 Icon" width="50" height="50">
+    <textarea ng-show="false" ng-model="thePlayer" rows=10 cols=20 readonly></textarea>
+    <textarea ng-show="false" ng-model="theGame" rows=10 cols=20 readonly></textarea>
 	  <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}"
       style="height:90%; width:100%; overflow: hidden;"
       scrolling="no" seamless="seamless"></iframe>

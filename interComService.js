@@ -7,6 +7,7 @@ angular.module('myApp')
 	var game = {}
 	var match = {};
 	var playMode;
+	var gameList = [];
 	function setUser(obj){
 		if (obj.displayName !== undefined){
 			user.dispayName = obj.displayName;
@@ -40,6 +41,9 @@ angular.module('myApp')
 	function setPlayMode(mode){
 		playMode = mode;
 	}
+	function setGameList(obj){
+		gameList = obj;
+	}
 	function getUser(){
 		return user;
 	}
@@ -52,12 +56,17 @@ angular.module('myApp')
 	function getMode(){
 		return playMode;
 	}
+	function getGameList(){
+		return gameList;
+	}
 	this.setUser = setUser;
 	this.setGame = setGame;
 	this.setMatch = setMatch;
 	this.setPlayMode = setPlayMode;
+	this.setGameList = setGameList;
 	this.getUser = getUser;
 	this.getGame = getGame;
 	this.getMatch = getMatch;
 	this.getMode = getMode;
+	this.getGameList = getGameList;
 });

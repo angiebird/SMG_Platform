@@ -28,6 +28,10 @@ myApp.config(['$routeProvider', '$locationProvider',
         templateUrl: 'login.html',
         controller: 'loginCtrl'
       })
+      .when('/matchList', {
+        templateUrl: 'matchList.html',
+        controller: 'matchCtrl'
+      })
       .when('/modeSelect', {
         templateUrl: 'modeSelect.html',
         controller: 'modeCtrl'
@@ -64,7 +68,30 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
     }];
     sendServerMessage('REGISTER_PLAYER', obj);
   };
-  $scope.guestLogin();
+  $scope.updatePlayer = function() {
+    if (typeof(Storage) != "undefined") {
+      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+      //console.log("playerInfo" + localStorage.getItem("playerInfo"));
+    }
+    if (playerInfo != null) {
+      $scope.displayName = playerInfo.displayName;
+      $scope.avatarImageUrl = playerInfo.avatarImageUrl;
+      $scope.myPlayerId = playerInfo.myPlayerId;
+      $scope.myAccessSignature = playerInfo.accessSignature;
+      $scope.myTokens = playerInfo.tokens;
+      var userObj = {
+        displayName: $scope.displayName,
+        playerId: $scope.myPlayerId,
+        accessSignature: $scope.myAccessSignature,
+        avartarUrl: $scope.avatarImageUrl
+      };
+      interComService.setUser(userObj);
+    }
+  }
+  $scope.updatePlayer();
+  if (playerInfo == null) {
+  	$scope.guestLogin();
+  }
 
   function sendServerMessage(t, obj) {
     var type = t;
@@ -101,6 +128,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
       gamelist.push(g)
     }
     $scope.availableGames = gamelist;
+    interComService.setGameList(gamelist);
   }
 
   function updatePlayerInfo(obj) {
@@ -109,19 +137,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
     //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
     $scope.updatePlayer();
   };
-  $scope.updatePlayer = function() {
-    if (typeof(Storage) != "undefined") {
-      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-      //console.log("playerInfo" + localStorage.getItem("playerInfo"));
-      if (playerInfo != null) {
-        $scope.displayName = playerInfo.displayName;
-        $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-        $scope.myPlayerId = playerInfo.myPlayerId;
-        $scope.myAccessSignature = playerInfo.accessSignature;
-        $scope.myTokens = playerInfo.tokens;
-      }
-    }
-  }
   $scope.gameSelected = function() {
     console.log("game Selected");
     var i;
@@ -132,13 +147,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
       }
     }
     if ($scope.myPlayerId !== undefined) {
-      var userObj = {
-        displayName: $scope.displayName,
-        playerId: $scope.myPlayerId,
-        accessSignature: $scope.myAccessSignature,
-        avartarUrl: $scope.avatarImageUrl
-      };
-      interComService.setUser(userObj);
       var gameObj = {
         gameId: $scope.selectedGame,
         gameUrl: $scope.gameUrl,
@@ -150,9 +158,58 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   };
 })
 
+myApp.controller('matchCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+  var theGame = interComService.getGame();
+  var thePlayer = interComService.getUser();
+  var theMatchList = [];
+  getMatchList();
+  
+  function getMatchList(){
+    var resMatchObj = [{
+      getPlayerMatches: {
+        gameId: theGame.gameId,
+        myPlayerId: thePlayer.playerId,
+        getCommunityMatches: false,
+        accessSignature: thePlayer.accessSignature
+      }
+    }];
+    $scope.getPlayerMatches = angular.toJson(resMatchObj, true);
+    sendServerMessage('GET_MATCHES', resMatchObj);
+  };
+
+  function sendServerMessage(t, obj) {
+    var type = t;
+    serverApiService.sendMessage(obj, function(response) {
+      processServerResponse(type, response);
+    });
+  };
+
+  function processServerResponse(type, resObj) {
+    if (type === 'GET_MATCHES') {
+      updateMatchList(resObj);
+    } 
+  };
+  
+  function updateMatchList(resObj){
+  	//$scope.theMatchList = angular.toJson(resObj);
+  	var matches = resObj[0].matches;
+  	for(var i = 0; i < matches.length; i++){
+  		theMatchList.push(matches[i]);
+  	}
+  	$scope.theMatchListJson = angular.toJson(theMatchList, true);
+  	$scope.theMatchList = theMatchList;
+  };
+  
+  function resumeMatch(matchObj){
+    $location.path('game');
+  }
+  $scope.resumeMatch = resumeMatch;
+
+})
+
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
   this.name = "modeCtrl";
-  $scope.playMode = "passAndPlay"
+  $scope.playMode = "playWhite"
   var game = interComService.getGame();
   this.params = $routeParams;
   $scope.$watch('playMode', function() {
@@ -161,6 +218,9 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   $scope.startGame = function() {
     interComService.setPlayMode($scope.currentPlayMode);
     $location.path('game');
+  }
+  $scope.gotoMatches = function() {
+      $location.path('/matchList');
   }
 })
 
@@ -173,6 +233,8 @@ myApp.controller('gameCtrl',
     $scope.myAccessSignature = thePlayer.accessSignature;
     $scope.displayName = thePlayer.displayName;
     $scope.avatarImageUrl = thePlayer.avartarUrl;
+    $scope.thePlayer = angular.toJson(thePlayer);
+    $scope.theGame = angular.toJson(theGame);
     var matchOnGoing = false;
     var myLastMove;
     var myTurnIndex = 0;
