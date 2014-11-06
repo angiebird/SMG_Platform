@@ -1,0 +1,11 @@
+﻿<div>
+<div>
+	<select ng-model="playMode" ng-change="updateOpponent()">
+      <option value="passAndPlay">Pass-and-play</option>
+      <option value="playAgainstTheComputer">Play-against-the-computer</option>
+      <option value="playWhite">Start New Game</option>
+      <option value="playBlack">Reserve Auto Match</option>
+    </select>
+</div>
+<div><button ng-click="startGame()">Start Game</button></div>
+</div>

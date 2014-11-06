@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp', []).config(function($provide) {
+angular.module('myApp', ['ngRoute', 'ngAnimate']).config(function($provide) {
     $provide.decorator("$exceptionHandler", function($delegate) {
 		return function(exception, cause) {
 			$delegate(exception, cause);
@@ -10,41 +10,151 @@ angular.module('myApp', []).config(function($provide) {
 	});
 });
 
-angular.module('myApp', [])
-.controller('PlatformCtrl',
-function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService) {
-    getGames();
-    //getMatches();
+var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate']);
+myApp.config(['$routeProvider', '$locationProvider',
+      function($routeProvider, $locationProvider) {
+        $routeProvider
+        	.when('/', {
+            templateUrl: 'login.html',
+            controller: 'loginCtrl'
+          })
+          .when('/index.html', {
+            templateUrl: 'login.html',
+            controller: 'loginCtrl'
+          })
+          .when('/login', {
+            templateUrl: 'login.html',
+            controller: 'loginCtrl'
+          })
+          .when('/modeSelect', {
+            templateUrl: 'modeSelect.html',
+            controller: 'modeCtrl'
+          })
+          .when('/game', {
+            templateUrl: 'game.html',
+            controller: 'gameCtrl'
+          });
+        $locationProvider.html5Mode(true);
+	}])
+myApp.controller('routeCtrl', 
+      function($route, $routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+        this.$route = $route;
+        this.$location = $location;
+        this.$routeParams = $routeParams;
+	})
+myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+	this.name = "loginCtrl";
+	this.params = $routeParams;
+	var playerInfo = null;
+	getGames();
+	$scope.guestLogin = function (){
+		var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
+	  	var rand = Math.floor(Math.random()*5);
+	  	var name = avatarLs[rand] + Math.floor(Math.random()*1000);
+	  	var img = "img/" + avatarLs[rand] + ".png";
+	  	var obj = [{registerPlayer:{displayName: name, avatarImageUrl: img}}];
+	  	sendServerMessage('REGISTER_PLAYER', obj);
+	};
+	function sendServerMessage(t, obj) {
+		var type = t;
+		serverApiService.sendMessage(obj, function (response) {
+			processServerResponse(type, response);
+      	});
+      	};
+  	 	function processServerResponse(type, resObj){
+  		if (type === 'GET_GAMES'){
+  			updateGameList(resObj);
+  		}
+  		else if(type === 'REGISTER_PLAYER'){
+  			updatePlayerInfo(resObj);
+  		}
+ 	 }
+ 	 function getGames(){
+  		sendServerMessage('GET_GAMES', [{getGames: {}}]);
+  	 }
+ 	 function updateGameList(obj){
+  		var gamesObj = obj[0].games;
+  		var gamelist = [];
+  		var i;
+  		for (i=0; i< gamesObj.length; i++){
+  			var g = {gameId: gamesObj[i].gameId, gameName: gamesObj[i].languageToGameName.en, gameUrl:gamesObj[i].gameUrl, developerEmail:gamesObj[i].gameDeveloperEmail};
+  			gamelist.push(g)
+  		}
+  		$scope.availableGames = gamelist;
+     }
+     function updatePlayerInfo(obj){
+     	playerInfo = obj[0].playerInfo;
+     	localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
+     	//console.log("playerInfo: " + localStorage.getItem("playerInfo"));
+     	$scope.updatePlayer();
+     };
+     $scope.updatePlayer = function(){
+     	if (typeof(Storage) != "undefined") {
+     		playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+     		//console.log("playerInfo" + localStorage.getItem("playerInfo"));
+     			if(playerInfo != null){
+     				$scope.displayName = playerInfo.displayName;
+     				$scope.avatarImageUrl = playerInfo.avatarImageUrl;
+     				$scope.myPlayerId = playerInfo.myPlayerId;
+     				$scope.myAccessSignature = playerInfo.accessSignature;
+     				$scope.myTokens = playerInfo.tokens;
+     			}
+     	}
+     }
+	 $scope.gameSelected = function(){
+	 	console.log("game Selected");
+	 	var i;
+	 	for (i = 0; i < $scope.availableGames.length; i++){
+	 		if ($scope.selectedGame === $scope.availableGames[i].gameId){
+	 			$scope.gameUrl = $scope.availableGames[i].gameUrl;
+	 			$scope.developerEmail = $scope.availableGames[i].developerEmail;
+	 		}
+	 	}
+	 	if ($scope.myPlayerId !== undefined){
+	 		var userObj = {displayName : $scope.displayName, playerId: $scope.myPlayerId, accessSignature: $scope.myAccessSignature, avartarUrl: $scope.avatarImageUrl};
+	 		interComService.setUser(userObj);
+	 		var gameObj = {gameId : $scope.selectedGame, gameUrl : $scope.gameUrl, developerEmail : $scope.developerEmail};
+	 		interComService.setGame(gameObj);
+	 		$location.path('/modeSelect');
+	 	}
+	 };
+})
+
+myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+      this.name = "modeCtrl";
+      $scope.playMode = "passAndPlay"
+      var game = interComService.getGame();
+      this.params = $routeParams;
+      $scope.$watch('playMode', function() {
+   		 $scope.currentPlayMode = $scope.playMode
+  	  });
+  	  $scope.startGame = function(){
+  	  	interComService.setPlayMode($scope.currentPlayMode);
+  	  	$location.path('game');
+  	  }
+})   
+ 
+myApp.controller('gameCtrl',
+function ($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+  var theGame = interComService.getGame();
+  var thePlayer = interComService.getUser();
+  $scope.selectedGame = theGame.gameId;
+  $scope.myPlayerId = thePlayer.playerId;
+  $scope.myAccessSignature = thePlayer.accessSignature;
+  $scope.displayName = thePlayer.displayName;
+  $scope.avartarIamgeUrl = thePlayer.avartarUrl;
+  var matchOnGoing = false;
   var myLastMove;
   var myTurnIndex = 0;
   var numOfMove = 0;
   var AutoGameRefresher;
   var myLastState;
   var myMatchId = "";
-  var platformUrl = $window.location.search;
-  var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
-
+  $scope.playMode = interComService.getMode();
   var playerInfo = null;
-
-  $scope.avatarImageUrl = "img/unknown.png";
+  $scope.gameUrl = $sce.trustAsResourceUrl(theGame.gameUrl);
   $scope.avatarImageUrl2 = "img/unknown.png";
   
-
-  //Check browser support
-  $scope.updatePlayer = function(){
-	  if (typeof(Storage) != "undefined") {
-          playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-          //console.log("playerInfo" + localStorage.getItem("playerInfo"));
-          if(playerInfo != null){
-        	  $scope.displayName = playerInfo.displayName;
-	    	  $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-	    	  $scope.myPlayerId = playerInfo.myPlayerId;
-	    	  $scope.myAccessSignature = playerInfo.accessSignature;
-	    	  $scope.myTokens = playerInfo.tokens;
-          }
-	  }
-  }
-  $scope.updatePlayer();
   
   $scope.updateOpponent = function(){
 	  if($scope.playMode == "playAgainstTheComputer"){
@@ -54,14 +164,9 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   };
   $scope.updateOpponent();
 
-  // Used to determine whether to hide match options or not
-  $scope.hideMatchOptions = false;
-  if (gameUrl === null) {
-  		gameUrl = ""
-  }
-  $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   var gotGameReady = false;
-  $scope.startNewMatch = function () {
+  
+  function startNewMatch() {
     stateService.startNewMatch();
     if($scope.playMode === 'playBlack'){
     var resMatchObj = [{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: $scope.selectedGame, myPlayerId:$scope.myPlayerId, accessSignature:$scope.myAccessSignature}}];
@@ -69,21 +174,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     myTurnIndex = 1;
     }
   };
-  $scope.gameSelected = function(){
-     console.log("game Selected");
-     var i;
-     for (i = 0; i < $scope.availableGames.length; i++){
-     	if ($scope.selectedGame === $scope.availableGames[i].gameId){
-     		$scope.gameUrl = $sce.trustAsResourceUrl($scope.availableGames[i].gameUrl);
-     		$scope.developerEmail = $scope.availableGames[i].developerEmail;
-     	}
-     }
-     //getMatches();
-  };
-  $scope.matchSelected = function () {
-      console.log("match selected");
-      // Need to do something after a match is selected
-  }
+
   $scope.getStatus = function () {
     if (!gotGameReady) {
       return "Waiting for 'gameReady' message from the game...";
@@ -94,25 +185,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
     }
     return "Match is ongoing! Turn of player index " + matchState.turnIndex;
   };
-  $scope.playMode = "passAndPlay";
+
   stateService.setPlayMode($scope.playMode);
-  $scope.$watch('playMode', function() {
-    stateService.setPlayMode($scope.playMode);
-  });
-  $scope.guestLogin = function (){
-	  var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
-	  var rand = Math.floor(Math.random()*5);
-	  var name = avatarLs[rand] + Math.floor(Math.random()*1000);
-	  var img = "img/" + avatarLs[rand] + ".png";
-	  var obj = [{registerPlayer:{displayName: name, avatarImageUrl: img}}];
-	  sendServerMessage('REGISTER_PLAYER', obj);
-  };
-  function updatePlayerInfo(obj){
-	  playerInfo = obj[0].playerInfo;
-	  localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
-      //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
-	  $scope.updatePlayer();
-  };
   function sendServerMessage(t, obj) {
       var type = t;
       serverApiService.sendMessage(obj, function (response) {
@@ -120,13 +194,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       });
     };
   function processServerResponse(type, resObj){
-  	if (type === 'GET_GAMES'){
-  		updateGameList(resObj);
-  	}
-  	else if(type === 'REGISTER_PLAYER'){
-  		updatePlayerInfo(resObj);
-  	}
-  	else if (type === 'GET_MATCHES') {
+  	if (type === 'GET_MATCHES') {
   	    updateMatchList(resObj);
   	}
   	else if (type === 'CHECK_UPDATE') {
@@ -135,43 +203,6 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
   	else if (type === 'NEW_MATCH' || type === 'RESERVE_MATCH'){
   		handleResAutoMatch(resObj);
   	}
-  }
-  function getGames(){
-  	sendServerMessage('GET_GAMES', [{getGames: {}}]);
-  }
-  /*
-  function getMatches() {
-      if (playerInfo !== undefined)
-      {
-          console.log("PLAYER INFO IS DEFINED");
-          sendServerMessage('GET_MATCHES', [{
-              reserveAutoMatch: {
-                  tokens: 0, numberOfPlayers: 2, gameId: $scope.selectedGame,
-                  myPlayerId: playerInfo.displayName, accessSignature: playerInfo.accessSignature
-              }
-          }]);
-      }
-      console.log("PLAYER INFO IS UNDEFINED");
-  }
-  */
-  function updateGameList(obj){
-  	var gamesObj = obj[0].games;
-  	var gamelist = [];
-  	var i;
-  	for (i=0; i< gamesObj.length; i++){
-  		var g = {gameId: gamesObj[i].gameId, gameName: gamesObj[i].languageToGameName.en, gameUrl:gamesObj[i].gameUrl, developerEmail:gamesObj[i].gameDeveloperEmail};
-  		gamelist.push(g)
-  	}
-  	$scope.availableGames = gamelist;
-  }
-  function updateMatchList(obj) {
-      var matchesObj = obj[0].matches;
-      var matchList = [];
-      for (var i = 0; i < matchesObj.length; i++) {
-          var match = {id: i/*get data from the message response*/};  
-      matchList.push(match);
-      }
-      $scope.availableMatches = matchList;
   }
   function isEqual(object1, object2) {
   	var obj1Str = JSON.stringify(object1);
@@ -264,6 +295,10 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
         platformMessageService.sendMessage({updateUI: params});
       	};
       	stateService.setGame(game);
+      	if(!matchOnGoing){
+  			startNewMatch();
+  			matchOnGoing = true;
+  		}
     	} else if (message.isMoveOkResult !== undefined) {
       	if (message.isMoveOkResult !== true) {
         	$window.alert("isMoveOk returned " + message.isMoveOkResult);
