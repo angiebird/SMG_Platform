@@ -8,8 +8,8 @@ angular.module('myApp')
 	var match = {};
 	var playMode;
 	function setUser(obj){
-		if (obj.displayedName !== undefined){
-			user.dispayedName = obj.displayedName;
+		if (obj.displayName !== undefined){
+			user.dispayName = obj.displayName;
 		}
 		if (obj.playerId !== undefined){
 			user.playerId = obj.playerId;

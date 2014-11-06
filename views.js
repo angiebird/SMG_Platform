@@ -16,7 +16,9 @@ myApp.config(['$routeProvider', '$locationProvider',
     $routeProvider
       .when('/', {
         templateUrl: 'login.html',
-        controller: 'loginCtrl'
+        controller: 'loginCtrl',
+        controllerAs: 'loginCtrl'
+        	
       })
       .when('/index.html', {
         templateUrl: 'login.html',
@@ -47,6 +49,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
+  this.playerInfo = playerInfo;
   getGames();
   $scope.guestLogin = function() {
     var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
@@ -168,7 +171,7 @@ myApp.controller('gameCtrl',
     $scope.myPlayerId = thePlayer.playerId;
     $scope.myAccessSignature = thePlayer.accessSignature;
     $scope.displayName = thePlayer.displayName;
-    $scope.avartarIamgeUrl = thePlayer.avartarUrl;
+    $scope.avatarImageUrl = thePlayer.avartarUrl;
     var matchOnGoing = false;
     var myLastMove;
     var myTurnIndex = 0;
