@@ -1,7 +1,6 @@
 <div>
 	<div><img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50"></div>
 	<div><textarea ng-model="displayName" rows=1 cols=20 readonly></textarea></div>
-	<div><button ng-click="guestLogin()">Guest login</button></div>
     <div><select id="gameList" class="nullable" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
       <option value="">Please select a game from list</option>
     </select></div>

@@ -64,6 +64,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
     }];
     sendServerMessage('REGISTER_PLAYER', obj);
   };
+  $scope.guestLogin();
 
   function sendServerMessage(t, obj) {
     var type = t;
