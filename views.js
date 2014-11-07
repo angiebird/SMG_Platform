@@ -249,6 +249,15 @@ myApp.controller('gameCtrl',
         $scope.displayName2 = "computer";
         $scope.avatarImageUrl2 = "img/computer.png";
       }
+      else if(theMatch.playersInfo !== undefined){
+      	for(var i = 0; i < theMatch.playersInfo.length; i++){
+      		var p = theMatch.playersInfo[i];
+      		if(p.playerId !== $scope.myPlayerId){
+      			$scope.displayName2 = p.displayName;
+      			$scope.avatarImageUrl2 = p.avatarImageUrl;
+      		}
+      	}
+      }
     };
     $scope.updateOpponent();
 
@@ -405,6 +414,8 @@ myApp.controller('gameCtrl',
         if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))) {
           stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
         }
+        theMatch = matchObj;
+        $scope.updateOpponent();
       }
     }
 

@@ -34,9 +34,10 @@ angular.module('myApp')
 		}
 	}
 	function setMatch(obj){
-		if(obj.matchId !== undefined){
-			match.matchId = obj.matchId;
-		}
+		//if(obj.matchId !== undefined){
+		//	match.matchId = obj.matchId;
+		//}
+		match = obj;
 	}
 	function setPlayMode(mode){
 		playMode = mode;
