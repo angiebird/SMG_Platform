@@ -210,6 +210,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   };
   
   function resumeMatch(matchObj){
+  	interComService.setMatch(matchObj);
     $location.path('game');
   }
   $scope.resumeMatch = resumeMatch;
@@ -219,6 +220,7 @@ myApp.controller('gameCtrl',
   function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
     var theGame = interComService.getGame();
     var thePlayer = interComService.getUser();
+    var theMatch = interComService.getMatch();
     $scope.selectedGame = theGame.gameId;
     $scope.myPlayerId = thePlayer.playerId;
     $scope.myAccessSignature = thePlayer.accessSignature;
@@ -226,13 +228,16 @@ myApp.controller('gameCtrl',
     $scope.avatarImageUrl = thePlayer.avartarUrl;
     $scope.thePlayer = angular.toJson(thePlayer);
     $scope.theGame = angular.toJson(theGame);
-    var matchOnGoing = false;
     var myLastMove;
     var myTurnIndex = 0;
     var numOfMove = 0;
     var AutoGameRefresher;
     var myLastState;
-    var myMatchId = "";
+    var matchOnGoing = false;
+    var myMatchId = theMatch.matchId;
+    if(myMatchId !== undefined){
+    	matchOnGoing = true;
+    }
     $scope.playMode = interComService.getMode();
     var playerInfo = null;
     $scope.gameUrl = $sce.trustAsResourceUrl(theGame.gameUrl);
@@ -440,6 +445,9 @@ myApp.controller('gameCtrl',
           if (!matchOnGoing) {
             startNewMatch();
             matchOnGoing = true;
+          }
+          else{
+          	checkGameUpdates();
           }
         } else if (message.isMoveOkResult !== undefined) {
           if (message.isMoveOkResult !== true) {
