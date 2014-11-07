@@ -431,6 +431,8 @@ myApp.controller('gameCtrl',
               myLastMove = movesObj[movesObj.length - 1];
               numOfMove = numOfMove + 1;
             }
+            theMatch = matchObj[i];
+            $scope.updateOpponent();
           }
         }
       }
