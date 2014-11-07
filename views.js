@@ -28,10 +28,6 @@ myApp.config(['$routeProvider', '$locationProvider',
         templateUrl: 'login.html',
         controller: 'loginCtrl'
       })
-      .when('/matchList', {
-        templateUrl: 'matchList.html',
-        controller: 'matchCtrl'
-      })
       .when('/modeSelect', {
         templateUrl: 'modeSelect.html',
         controller: 'modeCtrl'
@@ -158,10 +154,23 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   };
 })
 
-myApp.controller('matchCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+  this.name = "modeCtrl";
   var theGame = interComService.getGame();
   var thePlayer = interComService.getUser();
   var theMatchList = [];
+
+  $scope.playMode = "playWhite"
+  var game = interComService.getGame();
+  this.params = $routeParams;
+  $scope.$watch('playMode', function() {
+    $scope.currentPlayMode = $scope.playMode
+  });
+  $scope.startGame = function() {
+    interComService.setPlayMode($scope.currentPlayMode);
+    $location.path('game');
+  }
+
   getMatchList();
   
   function getMatchList(){
@@ -204,24 +213,6 @@ myApp.controller('matchCtrl', function($routeParams, $location, $scope, $rootSco
     $location.path('game');
   }
   $scope.resumeMatch = resumeMatch;
-
-})
-
-myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
-  this.name = "modeCtrl";
-  $scope.playMode = "playWhite"
-  var game = interComService.getGame();
-  this.params = $routeParams;
-  $scope.$watch('playMode', function() {
-    $scope.currentPlayMode = $scope.playMode
-  });
-  $scope.startGame = function() {
-    interComService.setPlayMode($scope.currentPlayMode);
-    $location.path('game');
-  }
-  $scope.gotoMatches = function() {
-      $location.path('/matchList');
-  }
 })
 
 myApp.controller('gameCtrl',
