@@ -288,7 +288,11 @@ myApp.controller('gameCtrl',
       if (matchState.endMatchScores) {
         return "Match ended with scores: " + matchState.endMatchScores;
       }
-      return "Match is ongoing! Turn of player index " + matchState.turnIndex;
+      
+      if (matchState.turnIndex === myTurnIndex)
+        return "Match is ongoing! It is your turn.";
+      else
+        return "Match is ongoing! It is the opponent's turn.";
     };
 
     stateService.setPlayMode($scope.playMode);
