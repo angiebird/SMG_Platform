@@ -1,3 +1,7 @@
+.platformBackground {
+  background-image: url("img/sample_background.jpg");
+}
+
 .centerItem {
   margin-left: auto;
   margin-right: auto;
@@ -8,6 +12,14 @@
   text-align: center;
 }
 
+.leftItem {
+  float: left;
+}
+
+.rightItem {
+  float: right;
+}
+
 .testing {
-    border: 2px violet solid;
+  border: 2px violet solid;
 }
