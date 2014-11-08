@@ -1,0 +1,13 @@
+.centerItem {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.centerText {
+  text-align: center;
+}
+
+.testing {
+    border: 2px violet solid;
+}

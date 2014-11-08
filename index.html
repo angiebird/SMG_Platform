@@ -16,11 +16,12 @@
   <script src="http://yoav-zibin.github.io/emulator/serverApiService.js"></script>
   <script src="ui-bootstrap-tpls-0.11.2.min"></script>
   <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="platform.css" />
     <script type="text/javascript">
     angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
   </script>
 </head>
-<body style="height:100%; width:100%; overflow: hidden;"
+<body class="centerItem" style="height:100%; width:100%; overflow: hidden;"
     ng-cloak>
   	<div class="view-animate-container" ng-controller="routeCtrl">
       <div ng-view class="view-animate"></div>

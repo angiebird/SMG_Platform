@@ -1,8 +1,11 @@
 <div style="height:90%; width:100%; overflow: hidden;">
-	<div><img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50"></div>
-	<div><textarea ng-model="displayName" rows=1 cols=20 readonly></textarea></div>
-	<div><button class="btn btn-primary" ng-click="guestLogin()">guest login</button></div>
-    <div><select id="gameList" class="nullable" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
+    <div><img class="centerItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50"></div>
+    <div class="label label-success centerItem">{{displayName}}</div>
+    <br />
+    <br />
+	<div><button class="btn btn-primary centerItem" ng-click="guestLogin()">guest login</button></div>
+    <br />
+    <div><select id="gameList" class="nullable btn btn-primary dropdown-toggle centerItem" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
       <option value="">Please select a game from list</option>
     </select></div>
 </div>

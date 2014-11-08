@@ -1,15 +1,17 @@
 <div style="height:90%; width:100%; overflow: hidden;">
-	<div>
-		<select ng-model="playMode" ng-change="updateOpponent()">
+	<div class="dropdown">
+		<select class="btn btn-primary dropdown-toggle centerItem" ng-model="playMode" ng-change="updateOpponent()">
 	      <option value="playWhite">Start a New Online Multiplayer Game</option>
 	      <option value="playBlack">Find an Opponent Online</option>
 	      <option value="passAndPlay">Start a Local Game</option>
 	      <option value="playAgainstTheComputer">Play-against-the-computer</option>
 	    </select>
 	</div>
-	<div><button ng-click="startGame()">Start Game</button></div>
-	<h1>Match List</h1>
-	<div ng-repeat="match in theMatchList">
+    <br />
+	<div><button class="btn btn-primary centerItem" ng-click="startGame()">Start Game</button></div>
+    <br />
+	<h1 class="centerText">Match List</h1>
+	<div class="centerItem" ng-repeat="match in theMatchList">
 		<img src={{match.playersInfo[0].avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
 		<textarea ng-model="match.playersInfo[0].displayName" rows=1 cols=20 readonly></textarea>
 		<img src={{match.playersInfo[1].avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">

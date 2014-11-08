@@ -1,9 +1,11 @@
-<div style="height:90%; width:100%; overflow: hidden;">
-	<div>{{getStatus()}}</div>
-	<textarea ng-model="displayName" rows=1 cols=20 readonly></textarea>
+<div style="height:90%; width:100%; overflow: hidden; margin-left: auto; margin-right: auto;">
+	
+    <div class="label label-success">{{displayName}}</div>
     <img src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
-    <textarea ng-model="displayName2" rows=1 cols=20 readonly></textarea>
+    <div class="label label-danger">{{(displayName2 ? displayName2 : "Waiting for an opponent...")}}</div>
     <img src={{avatarImageUrl2}} alt="HTML5 Icon" width="50" height="50">
+    <br />
+    <div class="label label-info">{{getStatus()}}</div>
     <textarea ng-show="false" ng-model="thePlayer" rows=10 cols=20 readonly></textarea>
     <textarea ng-show="false" ng-model="theGame" rows=10 cols=20 readonly></textarea>
 	  <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}"
