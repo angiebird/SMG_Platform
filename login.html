@@ -1,11 +1,37 @@
-<div style="height:90%; width:100%; overflow: hidden;">
-    <div><img class="centerItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50"></div>
-    <div class="label label-success centerItem">{{displayName}}</div>
+<div class="startDiv">
+	<div style="position:relative;top:20%;display:block;">
+    <div ><img class="centerItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="30%" height="30%"></div>
+    <br />
+    <div class="centerItem" style="position:relative;width:50%;height:15%;text-align:center;">
+    	<input type = "text" style="width:100%;height:100%;font-size:20px;" value="{{displayName}}"></input>
+    </div>
     <br />
     <br />
-	<div><button class="btn btn-primary centerItem" ng-click="guestLogin()">guest login</button></div>
-    <br />
-    <div><select id="gameList" class="nullable btn btn-primary dropdown-toggle centerItem" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()">
+	<div><button class="btn btn-primary centerItem" ng-click="guestLogin()" style="width:50%;height:15%;">Login With Another Account</button></div>
+	<br />
+    <div><select id="gameList" class="nullable btn btn-primary dropdown-toggle centerItem" ng-options="game.gameId as game.gameName for game in availableGames"  ng-model="selectedGame" ng-change="gameSelected()" style="width:50%; font-size:100%;">
       <option value="">Please select a game from list</option>
     </select></div>
+    <br />
+    <br />
+    	<div class="centerItem" style="width:70%">
+    		<tabset justified="true" style="width:100%">
+    			<tab heading="Single Player">
+    				<br />
+    				<div class="btn-group" style="width:100%">
+       					<label style="width:50%; font-size:80%;" class="btn btn-primary" ng-model="checkModel.left" btn-checkbox>Pass N Play</label>
+        				<label style="width:50%; font-size:80%;" class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Play With Computer</label>
+    				</div></tab>
+    			<tab heading="Play Online">
+    				<br />
+    				<div class="btn-group" style="width:100%">
+       					<label style="width:30%; font-size:80%;" class="btn btn-primary" ng-model="checkModel.left" btn-checkbox>New Match</label>
+        				<label style="width:40%; font-size:80%;" class="btn btn-primary" ng-model="checkModel.middle" btn-checkbox>Find Auto Match</label>
+        				<label style="width:30%; font-size:80%;" class="btn btn-primary" ng-model="checkModel.right" btn-checkbox>Match List</label>
+    				</div>
+    			</tab>
+ 			 </tabset>
+    	</div>
+    <br />
+</div>
 </div>

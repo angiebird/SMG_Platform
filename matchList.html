@@ -1,0 +1,11 @@
+<div style="height:90%; width:100%; overflow: hidden;">
+	<div ng-repeat="match in theMatchList">
+		<img src={{match.playersInfo[0].avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
+		<textarea ng-model="match.playersInfo[0].displayName" rows=1 cols=20 readonly></textarea>
+		<img src={{match.playersInfo[1].avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
+		<textarea ng-model="match.playersInfo[1].displayName" rows=1 cols=20 readonly></textarea>
+		<button ng-click="resumeMatch(match)">resume</button>
+	</div>
+	<textarea ng-show="false" ng-model="theMatchListJson" rows=5 cols=20 readonly></textarea>
+	<textarea ng-show="false" ng-model="getPlayerMatches" rows=5 cols=20 readonly></textarea>
+</div>

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp', ['ngRoute', 'ngAnimate']).config(function($provide) {
+angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap']).config(function($provide) {
   $provide.decorator("$exceptionHandler", function($delegate) {
     return function(exception, cause) {
       $delegate(exception, cause);
@@ -10,7 +10,7 @@ angular.module('myApp', ['ngRoute', 'ngAnimate']).config(function($provide) {
   });
 });
 
-var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate']);
+var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap']);
 myApp.config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
     $routeProvider
@@ -35,17 +35,32 @@ myApp.config(['$routeProvider', '$locationProvider',
       .when('/game', {
         templateUrl: 'game.html',
         controller: 'gameCtrl'
-      });
+      })
     $locationProvider.html5Mode(true);
   }
 ])
 myApp.controller('routeCtrl',
-  function($route, $routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+  function($route, $routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+  	platformScaleService.scaleBody({width: 1080, height: 1920});
     this.$route = $route;
     this.$location = $location;
     this.$routeParams = $routeParams;
+    $scope.$on("$routeChangeSuccess", function(event, current, previous) {
+        var previousCtrl = previous && previous.$$route && previous.$$route.controller;
+        var currentCtrl = current && current.$$route && current.$$route.controller;
+        if (previousCtrl === "loginCtrl" && (currentCtrl === "modeCtrl" || currentCtrl === "gameCtrl")) {
+            $scope.animationStyle = "slideLeft";
+        } 
+        else if (previousCtrl === "gameCtrl" && (currentCtrl === "loginCtrl" || currentCtrl === "modeCtrl")) {
+            $scope.animationStyle = "slideRight";
+        }
+        if(!$scope.$$phase) {
+          $scope.$apply();
+        }
+    });
   })
-myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+  //platformScaleService.scaleBody(platformScaleService.getGameSize());
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
@@ -154,8 +169,11 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   };
 })
 
-myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   this.name = "modeCtrl";
+  if (interComService.getUser() === undefined || interComService.getGame() === undefined){
+  	$location.path('/');
+  }
   var theGame = interComService.getGame();
   var thePlayer = interComService.getUser();
   var theMatchList = [];
@@ -217,7 +235,10 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
 })
 
 myApp.controller('gameCtrl',
-  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, interComService) {
+  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+    if (interComService.getUser() === undefined || interComService.getGame() === undefined){
+  		$location.path('/');
+  	}
     var theGame = interComService.getGame();
     var thePlayer = interComService.getUser();
     var theMatch = interComService.getMatch();

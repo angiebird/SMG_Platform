@@ -23,3 +23,57 @@
 .testing {
   border: 2px violet solid;
 }
+
+.startDiv{
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ background-image: url("img/bcImg1.png");
+ background-size:100% 100%;
+}
+#gameContent{
+	position: relative;
+}
+.slideLeft.ng-enter, .slideLeft.ng-leave, .slideRight.ng-enter, .slideRight.ng-leave {
+    -webkit-transition:all 0.5s;
+    transition:all 0.5s;
+}
+.slowlyAppear {
+  -webkit-animation: slowlyAppear 1s linear; /* Chrome, Safari, Opera */
+  animation: slowlyAppear 1s linear;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes slowlyAppear {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes slowlyAppear {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+.slideLeft.ng-enter {
+    left:300%;
+}
+
+.slideLeft.ng-enter.ng-enter-active {
+    left:0;
+}
+
+.slideLeft.ng-leave.ng-leave-active {
+    left:-300%;
+}
+
+.slideRight.ng-enter {
+    left:-300%;
+}
+
+.slideRight.ng-enter.ng-enter-active {
+    left:0;
+}
+
+.slideRight.ng-leave.ng-leave-active {
+    left:300%;
+}

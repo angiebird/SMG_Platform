@@ -11,6 +11,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.js"></script>
   <script src="views.js"></script>
   <script src="platformMessageService.js"></script>
+  <script src="platformScaleService.js"></script>
   <script src="interComService.js"></script>
   <script src="stateService.js"></script>
   <script src="http://yoav-zibin.github.io/emulator/serverApiService.js"></script>
@@ -23,8 +24,10 @@
 </head>
 <body class="platformBackground" style="height:100%; width:100%; overflow: hidden;"
     ng-cloak>
-  	<div class="view-animate-container" ng-controller="routeCtrl">
-      <div ng-view class="view-animate"></div>
+  	<div ng-controller="routeCtrl" id="gameContent" class="slowlyAppear">
+  		<div>
+      		<div ng-view ng-class="animationStyle" style="position:absolute;height:100%; width:100%;"></div>
+      	</div>
     </div>
 </body>
 </html>
