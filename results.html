@@ -1,0 +1,24 @@
+<div class="startDiv" style="width:100%;height:100%;">
+    <div style="position:relative;top:10%;display:block;width:100%;height:70%;">
+        <div class="centerItem" style="width:70%;height100%;">
+            <tabset justified="true">
+                <tab heading="Game Results">
+                    <br />
+                    <div>
+                        <div ng-style="matchListStyle">
+                            <div class="centerItem" ng-model="matchStrings" style="position:relative;width:90%;height15%;font-size:90%;">
+                                TESTING POSITION
+                                <div>&nbsp;</div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+    <div class="centerItem" style="position:relative;top:20%;width:75%;height10%">
+        <button class="btn btn-primary" ng-click="goBackToMenu" style="width:20%;height:10%;font-size:70%" ">Menu</button>
+        <button class="btn btn-primary" ng-click="resumeMatch(match)" style="position:relative;left:60%;width:20%;height:10%;font-size:70%">Game</button>
+    </div>
+</div>
