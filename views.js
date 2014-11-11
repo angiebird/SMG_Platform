@@ -179,10 +179,14 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   	$location.path('/modeSelect');
   };
 
-  $scope.gotoGame = function(playMode) {
+  $scope.gotoGame = function (playMode) {
     interComService.setPlayMode(playMode);
     $location.path('game');
-  }
+  };
+  
+  $scope.gotoResults = function () {
+    $location.path('/results');
+  };
 })
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
