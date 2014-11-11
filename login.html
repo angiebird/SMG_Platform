@@ -19,15 +19,15 @@
     			<tab heading="Single Player">
     				<br />
     				<div class="btn-group" style="width:100%">
-       					<label style="width:50%; font-size:80%;" class="btn btn-primary" >Pass N Play</label>
-        				<label style="width:50%; font-size:80%;" class="btn btn-primary" >Play With Computer</label>
+       					<label style="width:50%; font-size:80%;" class="btn btn-primary" ng-click="gotoGame('passAndPlay')">Pass N Play</label>
+        				<label style="width:50%; font-size:80%;" class="btn btn-primary" ng-click="gotoGame('playAgainstTheComputer')">Play With Computer</label>
     				</div></tab>
     			<tab heading="Play Online">
     				<br />
     				<div class="btn-group" style="width:100%">
-       					<label style="width:30%; font-size:80%;" class="btn btn-primary" >New Match</label>
-        				<label style="width:40%; font-size:80%;" class="btn btn-primary" >Find Auto Match</label>
-        				<label style="width:30%; font-size:80%;" class="btn btn-primary" >Match List</label>
+       					<label style="width:30%; font-size:80%;" class="btn btn-primary" ng-click="gotoGame('playWhite')">New Match</label>
+        				<label style="width:40%; font-size:80%;" class="btn btn-primary" ng-click="gotoGame('playBlack')">Find Auto Match</label>
+        				<label style="width:30%; font-size:80%;" class="btn btn-primary" ng-click="gotoMatches()" >Match List</label>
     				</div>
     			</tab>
  			 </tabset>

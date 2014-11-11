@@ -166,9 +166,17 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
         developerEmail: $scope.developerEmail
       };
       interComService.setGame(gameObj);
-      $location.path('/modeSelect');
     }
   };
+
+  $scope.gotoMatches = function() {
+  	$location.path('/modeSelect');
+  };
+
+  $scope.gotoGame = function(playMode) {
+    interComService.setPlayMode(playMode);
+    $location.path('game');
+  }
 })
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
