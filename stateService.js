@@ -350,9 +350,6 @@ angular.module('myApp')
   };
 
   function setGame(_game) {
-    if (game !== undefined) {
-      throwError("You can call setGame only once");
-    }
     game = _game;
     get(game, "gameDeveloperEmail");
     get(game, "minNumberOfPlayers");
