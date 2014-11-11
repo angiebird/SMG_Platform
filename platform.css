@@ -42,6 +42,10 @@
   -webkit-animation: slowlyAppear 1s linear; /* Chrome, Safari, Opera */
   animation: slowlyAppear 1s linear;
 }
+html,body {    
+    height:100%;
+    margin: 0;
+}
 /* Chrome, Safari, Opera */
 @-webkit-keyframes slowlyAppear {
   from {opacity: 0;}
