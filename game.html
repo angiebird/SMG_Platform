@@ -1,14 +1,14 @@
 <div style="height:100%; width:100%;">
-	
-    <div class="label label-success leftItem">{{displayName}}</div>
-    <img class="leftItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="50" height="50">
-    <div class="label label-danger rightItem">{{(displayName2 ? displayName2 : "Waiting for an opponent...")}}</div>
-    <img class="rightItem" src={{avatarImageUrl2}} alt="HTML5 Icon" width="50" height="50">
-    <br /><br /><br />
-    <div class="label label-info">{{getStatus()}}</div>
-    <textarea ng-show="false" ng-model="thePlayer" rows=10 cols=20 readonly></textarea>
-    <textarea ng-show="false" ng-model="theGame" rows=10 cols=20 readonly></textarea>
-	  <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}"
-      style="height:90%; width:100%; overflow: hidden;"
-      scrolling="no" seamless="seamless"></iframe>
+	<div id="gameHolder">
+	  	<iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}" style="position:relative;top:0px;left:0px;height:100%; width:100%; overflow: hidden;" scrolling="no" seamless="seamless"></iframe>
+		<div id="myPanel" style="position:absolute;">
+			<div style="width:100%;height:50%;"><img class="leftItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="40%" height="100%"></div>
+    		<div class="label label-success leftItem">{{displayName}}</div>
+    		<div class="label label-info" style="width:100%">{{getStatus()}}</div>
+    	</div>
+    	<div id="oppPanel" style="position:absolute;">
+    		<div style="width:100%;height:50%;"><img class="rightItem" src={{avatarImageUrl2}} alt="HTML5 Icon" width="40%" height="100%">
+    		<div class="label label-danger rightItem">{{(displayName2 ? displayName2 : "Waiting for an opponent...")}}</div>
+    	</div>
+    </div>
 </div>

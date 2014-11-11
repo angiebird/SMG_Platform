@@ -60,7 +60,9 @@ myApp.controller('routeCtrl',
     });
   })
 myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
-  //platformScaleService.scaleBody(platformScaleService.getGameSize());
+  platformScaleService.stopScaleService();
+  platformScaleService.scaleBody({width: 320, height: 528});
+  platformScaleService.startScaleService();
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
@@ -181,6 +183,9 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   this.name = "modeCtrl";
+  platformScaleService.stopScaleService();
+  platformScaleService.scaleBody({width: 320, height: 528});
+  platformScaleService.startScaleService();
   var height = $window.innerHeight;
   if($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth ){
   	height = $window.innerHeight * (528/320);
@@ -301,6 +306,9 @@ myApp.controller('gameCtrl',
     if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   		$location.path('/');
   	}
+  	platformScaleService.stopScaleService();
+  	platformScaleService.scaleBody({width: 320, height: 320});
+  	platformScaleService.startScaleService();
     var theGame = interComService.getGame();
     var thePlayer = interComService.getUser();
     var theMatch = interComService.getMatch();
@@ -365,7 +373,7 @@ myApp.controller('gameCtrl',
 
     $scope.getStatus = function() {
       if (!gotGameReady) {
-        return "Waiting for 'gameReady' message from the game...";
+        return "";
       }
       var matchState = stateService.getMatchState();
       if (matchState.endMatchScores) {
@@ -373,9 +381,9 @@ myApp.controller('gameCtrl',
       }
       
       if (matchState.turnIndex === myTurnIndex)
-        return "Match is ongoing! It is your turn.";
+        return "Your turn.";
       else
-        return "Match is ongoing! It is the opponent's turn.";
+        return "Opponent's turn.";
     };
 
     stateService.setPlayMode($scope.playMode);

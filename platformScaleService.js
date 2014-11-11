@@ -69,6 +69,30 @@ angular.module('myApp')
       gameContent.style['width'] = (gameSize.width*scale).toString() + "px";
       gameContent.style['left'] = tx + "px";
       gameContent.style['top'] = ty + "px";
+      var myPanel = document.getElementById("myPanel");
+      var oppPanel = document.getElementById("oppPanel");
+      if(myPanel && oppPanel){
+      	if ($window.innerWidth > $window.innerHeight){
+      		myPanel.style.top = "0%";
+      		myPanel.style.width = "20%";
+      		myPanel.style.height = "16%";
+      		myPanel.style.left = "-20%"
+      		oppPanel.style.top = "0%";
+      		oppPanel.style.width = "20%";
+      		oppPanel.style.height = "16%";
+      		oppPanel.style.left = "100%"
+      	}
+      	else{
+      		myPanel.style.top = "-16%";
+      		myPanel.style.width = "20%";
+      		myPanel.style.height = "16%";
+      		myPanel.style.left = "0%"
+      		oppPanel.style.top = "-16%";
+      		oppPanel.style.width = "20%";
+      		oppPanel.style.height = "16%";
+      		oppPanel.style.left = "80%"
+      	}
+      }
       /*
       gameContent.style['transform'] = transformString;
       gameContent.style['-o-transform'] = transformString;
@@ -83,11 +107,15 @@ angular.module('myApp')
       gameContent.style['-ms-transform-origin'] = transformOriginString;
       */
     }
-
+	function startScaleService(){
+		autoService = setInterval(rescale, 1000);
+	}
     $window.onresize = rescale;
     $window.onorientationchange = rescale;
     doc.addEventListener("orientationchange", rescale);
     autoService = setInterval(rescale, 1000);
 	this.getGameSize = getGameSize;
+	this.stopScaleService = stopScaleService;
     this.scaleBody = scaleBody;
+    this.startScaleService = startScaleService;
   });

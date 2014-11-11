@@ -34,6 +34,11 @@
 #gameContent{
 	position: relative;
 }
+#gameHolder{
+	position:relative;
+	width:100%;
+	height:100%;
+}
 .slideLeft.ng-enter, .slideLeft.ng-leave, .slideRight.ng-enter, .slideRight.ng-leave {
     -webkit-transition:all 0.5s;
     transition:all 0.5s;
