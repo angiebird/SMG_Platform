@@ -36,10 +36,6 @@ myApp.config(['$routeProvider', '$locationProvider',
         templateUrl: 'game.html',
         controller: 'gameCtrl'
       })
-      .when('/results', {
-        templateUrl: 'results.html',
-        controller: 'resultsCtrl'
-      })
     $locationProvider.html5Mode(true);
   }
 ])
@@ -611,11 +607,3 @@ myApp.controller('gameCtrl',
       }
     });
   });
-
-myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
-    this.name = "resultsCtrl";
-    var height = $window.innerHeight;
-    if ($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth) {
-        height = $window.innerHeight * (528 / 320);
-    }
-});
