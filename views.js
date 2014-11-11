@@ -197,6 +197,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   var theGame = interComService.getGame();
   var thePlayer = interComService.getUser();
   var theMatchList = [];
+  var theMatch = undefined;
   $scope.matchStrings = [{infoString : "xiangbo vs wugu on move 3", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo vs igau on move 8", joinable : false, matchId : 1234}, {infoString : "xiangbo vs waka on move 10", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}];
   $scope.playMode = "playWhite"
   var game = interComService.getGame();
@@ -211,7 +212,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   $scope.goBackToMenu = function(){
   	$location.path('/');
   }
-  //getMatchList();
+  getMatchList();
   $scope.matchListSelected = function(match){
   	$scope.selectedMatch = match;
   	if(match.joinable){
@@ -220,6 +221,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   	else{
   		$scope.joinBtTitle = "Watch Game"
   	}
+  	theMatch = theMatchList[match.idx];
   }
   $scope.joinMatch = function(){
   	//get match ID from $scope.selectedMatch; check if it is defined first
@@ -258,14 +260,16 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   			matchInfoObj = {
   								 infoString : theMatchList[i].playersInfo[0].displayName + " vs " + theMatchList[i].playersInfo[1].displayName + " on move " + theMatchList[i].history.moves.length,
   								 joinable : false,
-  								 matchId : theMatchList[i].matchId
+  								 matchId : theMatchList[i].matchId,
+  								 idx : i
   								}
   		}
-  		else if(theMatchList[i].playersInfor.length === 1){
+  		else if(theMatchList[i].playersInfo.length === 1){
   			matchInfoObj = {
   								 infoString : theMatchList[i].playersInfo[0].displayName + " is awaiting.",
   								 joinable : true,
-  								 matchId : theMatchList[i].matchId
+  								 matchId : theMatchList[i].matchId,
+  								 idx : i
   								}
   		}
   		currentMatchInfo.push(matchInfoObj);
@@ -283,9 +287,11 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   	//$scope.theMatchList = theMatchList;
   };
   
-  function resumeMatch(matchObj){
-  	interComService.setMatch(matchObj);
-    $location.path('game');
+  function resumeMatch(){
+  	if(theMatch !== undefined){
+  		interComService.setMatch(theMatch);
+    	$location.path('game');
+  	}
   }
   $scope.resumeMatch = resumeMatch;
 })
