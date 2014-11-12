@@ -385,6 +385,8 @@ myApp.controller('gameCtrl',
       }
       var matchState = stateService.getMatchState();
       if (matchState.endMatchScores) {
+        $rootScope.endGameMyTurnIndex = myTurnIndex;
+        $location.path('/results');
         return "Match ended with scores: " + matchState.endMatchScores;
       }
       
@@ -620,6 +622,21 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
     this.name = "resultsCtrl";
     var height = $window.innerHeight;
     if ($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth) {
-        height = $window.innerHeight * (528 / 320);
+      height = $window.innerHeight * (528 / 320);
     }
+
+    var matchState = stateService.getMatchState();
+    $scope.winLoseAnnouncement = "NOT ASSIGNED";
+
+    if ((interComService.getMode() === "playWhite" && matchState.endMatchScores[0] === 1)
+        || (interComService.getMode() === "playBlack" && matchState.endMatchScores[1] === 1)
+        || (interComService.getMode() === "playAgainstTheComputer" && matchState.endMatchScores[0] === 1))
+      $scope.winLoseAnnouncement = "YOU WIN";
+    else if (interComService.getMode() === "passAndPlay" && matchState.endMatchScores[0] === 1)
+      $scope.winLoseAnnouncement = "PLAYER 1 WINS";
+    else if (interComService.getMode() === "passAndPlay" && matchState.endMatchScores[1] === 1)
+      $scope.winLoseAnnouncement = "PLAYER 2 WINS";
+    else
+      $scope.winLoseAnnouncement = "YOU LOSE";
+
 });
