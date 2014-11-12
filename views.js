@@ -212,16 +212,8 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   var theMatchList = [];
   var theMatch = undefined;
   $scope.matchStrings = [{infoString : "xiangbo vs wugu on move 3", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo vs igau on move 8", joinable : false, matchId : 1234}, {infoString : "xiangbo vs waka on move 10", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}];
-  $scope.playMode = "playWhite"
   var game = interComService.getGame();
   this.params = $routeParams;
-  $scope.$watch('playMode', function() {
-    $scope.currentPlayMode = $scope.playMode
-  });
-  $scope.startGame = function() {
-    interComService.setPlayMode($scope.currentPlayMode);
-    $location.path('game');
-  }
   $scope.goBackToMenu = function(){
   	$location.path('/');
   }
@@ -303,6 +295,12 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   function resumeMatch(){
   	if(theMatch !== undefined){
   		interComService.setMatch(theMatch);
+  		if(theMatch.playersInfo[0].playerId === thePlayer.playerId){
+  			interComService.setPlayMode('playWhite');
+  		}
+  		else{
+  			interComService.setPlayMode('playBlack');
+  		}
     	$location.path('game');
   	}
   }
@@ -448,7 +446,7 @@ myApp.controller('gameCtrl',
       return false;
     }
 
-    function formatStateObject(obj) {
+    function formatStateObject(obj, lastObj) {
       var stateObj;
       var indexBefore;
       var indexAfter;
@@ -464,7 +462,6 @@ myApp.controller('gameCtrl',
           board: obj[1].set.value,
           delta: obj[2].set.value
         };
-        var lState;
         stateObj = {
           turnIndexBeforeMove: indexBefore,
           turnIndex: indexAfter,
@@ -474,6 +471,13 @@ myApp.controller('gameCtrl',
           lastVisibleTo: {},
           currentVisibleTo: {}
         };
+        if(lastObj !== null){
+          var lState = {
+            board: lastObj[1].set.value,
+            delta: lastObj[2].set.value
+          };
+          stateObj.lastState = lState;
+        }
         myLastState = cState;
         return stateObj;
       } else if (obj[0].endMatch !== undefined) {
@@ -517,7 +521,7 @@ myApp.controller('gameCtrl',
           myMatchId = matchObj.matchId;
         }
         if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))) {
-          stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
+          stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move), null);
         }
         theMatch = matchObj;
         $scope.updateOpponent();
@@ -532,7 +536,13 @@ myApp.controller('gameCtrl',
           if (myMatchId === matchObj[i].matchId) {
             var movesObj = matchObj[i].history.moves;
             if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
-              stateService.gotBroadcastUpdateUi(formatStateObject(movesObj[movesObj.length - 1]));
+            	if(movesObj.length >= 2){
+            	  var data = formatStateObject(movesObj[movesObj.length - 1], movesObj[movesObj.length - 2]);
+            	}
+            	else{
+            	  var data = formatStateObject(movesObj[movesObj.length - 1], null);
+            	}
+              stateService.gotBroadcastUpdateUi(data);
               myLastMove = movesObj[movesObj.length - 1];
               numOfMove = numOfMove + 1;
             }
@@ -599,6 +609,7 @@ myApp.controller('gameCtrl',
             matchOnGoing = true;
           }
           else{
+          	// resume match here
           	checkGameUpdates();
           }
         } else if (message.isMoveOkResult !== undefined) {
