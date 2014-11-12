@@ -1,14 +1,20 @@
 <div style="height:100%; width:100%;">
-	<div id="gameHolder">
-	  	<iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}" style="position:relative;top:0px;left:0px;height:100%; width:100%; overflow: hidden;" scrolling="no" seamless="seamless"></iframe>
-		<div id="myPanel" style="position:absolute;">
-			<div style="width:100%;height:50%;"><img class="leftItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="40%" height="100%"></div>
-    		<div class="label label-success leftItem">{{displayName}}</div>
-    		<div class="label label-info" style="width:100%">{{getStatus()}}</div>
+	<div id="gameHolder" style="position:relative;top:0px;left:0px;height:100%; width:100%;display:block;">
+	  	<iframe frameborder="0" id="game_iframe" ng-src="{{gameUrl}}" style="position:absolute;top:0px;left:0px;height:100%; width:100%;overflow: hidden;" scrolling="no" seamless="seamless"></iframe>
+		<div id="myPanel" style="position:absolute;display:block;">
+			<div style="width:100%;height:60%;"><img class="leftItem" src={{avatarImageUrl}} alt="HTML5 Icon" width="40%" height="100%"></div>
+    		<div class="label label-success leftItem" style="width:100%;font-size=90%;">{{displayName}}</div>
+    		<div class="label label-info" style="width:100%;font-size=90%;">{{getStatus()}}</div>
     	</div>
-    	<div id="oppPanel" style="position:absolute;">
-    		<div style="width:100%;height:50%;"><img class="rightItem" src={{avatarImageUrl2}} alt="HTML5 Icon" width="40%" height="100%">
-    		<div class="label label-danger rightItem">{{(displayName2 ? displayName2 : "Waiting for an opponent...")}}</div>
+    	<div id="oppPanel" style="position:absolute;display:block;">
+    		<div style="width:100%;height:60%;"><img class="rightItem" src={{avatarImageUrl2}} alt="HTML5 Icon" width="40%" height="100%"></div>
+    		<div class="label label-danger rightItem" style="width:100%;display:block;font-size=90%;">{{(displayName2 ? displayName2 : "Waiting opponent")}}</div>
     	</div>
+    	<div id="matchListBt" style="position:absolute;width:30%;display:block;">
+    		<button class="btn btn-primary centerItem" ng-click="" style="width:80%;height:100%;font-size:90%"">Match List</button>
+    	</div>
+    	<div id="dismissBt" style="position:absolute;width:30%;display:block;">
+    	<button class="btn btn-primary centerItem" ng-click="" style="width:80%;;height:100%;font-size:90%"">Give Up</button>
+    </div>
     </div>
 </div>

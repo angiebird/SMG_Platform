@@ -71,26 +71,36 @@ angular.module('myApp')
       gameContent.style['top'] = ty + "px";
       var myPanel = document.getElementById("myPanel");
       var oppPanel = document.getElementById("oppPanel");
+      var matchListBt = document.getElementById("matchListBt");
+      var dismissBt = document.getElementById("dismissBt");
       if(myPanel && oppPanel){
       	if ($window.innerWidth > $window.innerHeight){
       		myPanel.style.top = "0%";
-      		myPanel.style.width = "20%";
-      		myPanel.style.height = "16%";
-      		myPanel.style.left = "-20%"
+      		myPanel.style.width = "30%";
+      		myPanel.style.height = "20%";
+      		myPanel.style.left = "-30%"
       		oppPanel.style.top = "0%";
-      		oppPanel.style.width = "20%";
-      		oppPanel.style.height = "16%";
-      		oppPanel.style.left = "100%"
+      		oppPanel.style.width = "30%";
+      		oppPanel.style.height = "20%";
+      		oppPanel.style.left = "100%";
+      		matchListBt.style.left = "-30%";
+      		matchListBt.style.top = "90%";
+      		dismissBt.style.left = "100%";
+      		dismissBt.style.top = "90%";
       	}
       	else{
-      		myPanel.style.top = "-16%";
-      		myPanel.style.width = "20%";
-      		myPanel.style.height = "16%";
+      		myPanel.style.top = "-25%";
+      		myPanel.style.width = "30%";
+      		myPanel.style.height = "20%";
       		myPanel.style.left = "0%"
-      		oppPanel.style.top = "-16%";
-      		oppPanel.style.width = "20%";
-      		oppPanel.style.height = "16%";
-      		oppPanel.style.left = "80%"
+      		oppPanel.style.top = "-25%";
+      		oppPanel.style.width = "30%";
+      		oppPanel.style.height = "20%";
+      		oppPanel.style.left = "70%";
+      		matchListBt.style.left = "0%";
+      		matchListBt.style.top = "105%";
+      		dismissBt.style.left = "70%";
+      		dismissBt.style.top = "105%";
       	}
       }
       /*
