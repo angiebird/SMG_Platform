@@ -542,24 +542,58 @@ myApp.controller('gameCtrl',
         }
       }
     }
+    
+    function sendMakeMove(makeMove){
+      numOfMove = numOfMove + 1;
+      var moveObj = [{
+        madeMove: {
+          matchId: myMatchId,
+          move: makeMove,
+          moveNumber: numOfMove,
+          myPlayerId: $scope.myPlayerId,
+          accessSignature: $scope.myAccessSignature
+        }
+      }];
+      sendServerMessage('MADE_MOVE', moveObj);
+    }
+    
+    function sendNewMatch(makeMove){
+      var newMatchObj = [{
+        newMatch: {
+          gameId: $scope.selectedGame,
+          tokens: 0,
+          move: makeMove,
+          startAutoMatch: {
+            numberOfPlayers: 2
+          },
+          myPlayerId: $scope.myPlayerId,
+          accessSignature: $scope.myAccessSignature
+        }
+      }];
+      sendServerMessage('NEW_MATCH', newMatchObj);
+    }
+    
+    function setGame(game){
+      game.isMoveOk = function(params) {
+        platformMessageService.sendMessage({
+          isMoveOk: params
+        });
+        return true;
+      };
+      game.updateUI = function(params) {
+        platformMessageService.sendMessage({
+          updateUI: params
+        });
+      };
+      stateService.setGame(game);
+    }
+
     platformMessageService.addMessageListener(function(message) {
       //this function only handles local messages, server messages will be filtered out
       if (message.reply === undefined) {
         if (message.gameReady !== undefined) {
           gotGameReady = true;
-          var game = message.gameReady;
-          game.isMoveOk = function(params) {
-            platformMessageService.sendMessage({
-              isMoveOk: params
-            });
-            return true;
-          };
-          game.updateUI = function(params) {
-            platformMessageService.sendMessage({
-              updateUI: params
-            });
-          };
-          stateService.setGame(game);
+          setGame(message.gameReady);
           if (!matchOnGoing) {
             startNewMatch();
             matchOnGoing = true;
@@ -576,41 +610,14 @@ myApp.controller('gameCtrl',
           myLastMove = message.makeMove;
           if ($scope.playMode !== 'passAndPlay' && $scope.playMode !== 'playAgainstTheComputer') {
             if (!numOfMove && $scope.playMode === 'playWhite') {
-              var newMatchObj = [{
-                newMatch: {
-                  gameId: $scope.selectedGame,
-                  tokens: 0,
-                  move: message.makeMove,
-                  startAutoMatch: {
-                    numberOfPlayers: 2
-                  },
-                  myPlayerId: $scope.myPlayerId,
-                  accessSignature: $scope.myAccessSignature
-                }
-              }];
-              sendServerMessage('NEW_MATCH', newMatchObj);
-              if (AutoGameRefresher === undefined) {
-                AutoGameRefresher = setInterval(function() {
-                  checkGameUpdates()
-                }, 10000);
-              }
+            	sendNewMatch(message.makeMove);
             } else {
-              numOfMove = numOfMove + 1;
-              var moveObj = [{
-                madeMove: {
-                  matchId: myMatchId,
-                  move: message.makeMove,
-                  moveNumber: numOfMove,
-                  myPlayerId: $scope.myPlayerId,
-                  accessSignature: $scope.myAccessSignature
-                }
-              }];
-              sendServerMessage('MADE_MOVE', moveObj);
-              if (AutoGameRefresher === undefined) {
-                AutoGameRefresher = setInterval(function() {
-                  checkGameUpdates()
-                }, 10000);
-              }
+            	sendMakeMove(message.makeMove);
+            }
+            if (AutoGameRefresher === undefined) {
+              AutoGameRefresher = setInterval(function() {
+                checkGameUpdates()
+              }, 10000);
             }
           }
         }
