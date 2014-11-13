@@ -211,7 +211,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   var thePlayer = interComService.getUser();
   var theMatchList = [];
   var theMatch = undefined;
-  $scope.matchStrings = [{infoString : "xiangbo vs wugu on move 3", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo vs igau on move 8", joinable : false, matchId : 1234}, {infoString : "xiangbo vs waka on move 10", joinable : false, matchId : 1234}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}, {infoString : "xiangbo is awaiting", joinable : true, matchId : 14}];
+  $scope.matchStrings = [];
   $scope.playMode = "playWhite"
   var game = interComService.getGame();
   this.params = $routeParams;
@@ -272,7 +272,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   		if (theMatchList[i].playersInfo.length > 1){
   			matchInfoObj = {
   								 infoString : theMatchList[i].playersInfo[0].displayName + " vs " + theMatchList[i].playersInfo[1].displayName + " on move " + theMatchList[i].history.moves.length,
-  								 joinable : false,
+  								 joinable : true,
   								 matchId : theMatchList[i].matchId,
   								 idx : i
   								}
@@ -544,12 +544,14 @@ myApp.controller('gameCtrl',
           if (myMatchId === matchObj[i].matchId) {
             var movesObj = matchObj[i].history.moves;
             if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
+            	var data;
               if(movesObj.length >= 2){
-                var data = formatStateObject(movesObj[movesObj.length - 1], movesObj[movesObj.length - 2]);
+                data = formatStateObject(movesObj[movesObj.length - 1], movesObj[movesObj.length - 2]);
               }
               else{
-                var data = formatStateObject(movesObj[movesObj.length - 1], null);
+                data = formatStateObject(movesObj[movesObj.length - 1], null);
               }
+              stateService.gotBroadcastUpdateUi(data);
               myLastMove = movesObj[movesObj.length - 1];
               numOfMove = numOfMove + 1;
             }
