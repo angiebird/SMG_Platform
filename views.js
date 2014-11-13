@@ -357,7 +357,7 @@ myApp.controller('gameCtrl',
       else if(theMatch.playersInfo !== undefined){
       	for(var i = 0; i < theMatch.playersInfo.length; i++){
       		var p = theMatch.playersInfo[i];
-      		if(p.playerId !== $scope.myPlayerId){
+      		if(p && p.playerId !== $scope.myPlayerId){
       			$scope.displayName2 = p.displayName;
       			$scope.avatarImageUrl2 = p.avatarImageUrl;
       		}
@@ -470,7 +470,6 @@ myApp.controller('gameCtrl',
           board: obj[1].set.value,
           delta: obj[2].set.value
         };
-        var lState;
         stateObj = {
           turnIndexBeforeMove: indexBefore,
           turnIndex: indexAfter,
@@ -480,7 +479,7 @@ myApp.controller('gameCtrl',
           lastVisibleTo: {},
           currentVisibleTo: {}
         };
-        if(lastObj !== null){
+        if(lastObj){
           var lState = {
             board: lastObj[1].set.value,
             delta: lastObj[2].set.value
