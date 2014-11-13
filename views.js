@@ -304,6 +304,12 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   	if(theMatch !== undefined){
   		interComService.setMatch(theMatch);
     	$location.path('game');
+    	if(theMatch.playersInfo[0].playerId === thePlayer.playerId){
+    		interComService.setPlayMode('playWhite');
+    	}
+    	else{
+    		interComService.setPlayMode('playBlack');
+    	}
   	}
   }
   $scope.resumeMatch = resumeMatch;
@@ -448,7 +454,7 @@ myApp.controller('gameCtrl',
       return false;
     }
 
-    function formatStateObject(obj) {
+    function formatStateObject(obj, lastObj){
       var stateObj;
       var indexBefore;
       var indexAfter;
@@ -474,6 +480,13 @@ myApp.controller('gameCtrl',
           lastVisibleTo: {},
           currentVisibleTo: {}
         };
+        if(lastObj !== null){
+          var lState = {
+            board: lastObj[1].set.value,
+            delta: lastObj[2].set.value
+          };
+          stateObj.lastState = lState;
+        }
         myLastState = cState;
         return stateObj;
       } else if (obj[0].endMatch !== undefined) {
@@ -517,7 +530,7 @@ myApp.controller('gameCtrl',
           myMatchId = matchObj.matchId;
         }
         if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))) {
-          stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move));
+          stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move), null);
         }
         theMatch = matchObj;
         $scope.updateOpponent();
@@ -532,7 +545,12 @@ myApp.controller('gameCtrl',
           if (myMatchId === matchObj[i].matchId) {
             var movesObj = matchObj[i].history.moves;
             if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
-              stateService.gotBroadcastUpdateUi(formatStateObject(movesObj[movesObj.length - 1]));
+              if(movesObj.length >= 2){
+                var data = formatStateObject(movesObj[movesObj.length - 1], movesObj[movesObj.length - 2]);
+              }
+              else{
+                var data = formatStateObject(movesObj[movesObj.length - 1], null);
+              }
               myLastMove = movesObj[movesObj.length - 1];
               numOfMove = numOfMove + 1;
             }
