@@ -648,6 +648,10 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
       height = $window.innerHeight * (528 / 320);
     }
 
+    $scope.goBackToMenu = function () {
+        $location.path('/');
+    }
+
     var matchState = stateService.getMatchState();
     $scope.winLoseAnnouncement = "NOT ASSIGNED";
 
