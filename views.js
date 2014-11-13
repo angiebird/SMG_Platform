@@ -357,7 +357,7 @@ myApp.controller('gameCtrl',
       else if(theMatch.playersInfo !== undefined){
       	for(var i = 0; i < theMatch.playersInfo.length; i++){
       		var p = theMatch.playersInfo[i];
-      		if(p.playerId !== $scope.myPlayerId){
+      		if(p && p.playerId !== $scope.myPlayerId){
       			$scope.displayName2 = p.displayName;
       			$scope.avatarImageUrl2 = p.avatarImageUrl;
       		}
@@ -470,7 +470,6 @@ myApp.controller('gameCtrl',
           board: obj[1].set.value,
           delta: obj[2].set.value
         };
-        var lState;
         stateObj = {
           turnIndexBeforeMove: indexBefore,
           turnIndex: indexAfter,
@@ -480,7 +479,7 @@ myApp.controller('gameCtrl',
           lastVisibleTo: {},
           currentVisibleTo: {}
         };
-        if(lastObj !== null){
+        if(lastObj){
           var lState = {
             board: lastObj[1].set.value,
             delta: lastObj[2].set.value
@@ -634,11 +633,6 @@ myApp.controller('gameCtrl',
         }
       }
     });
-
-    $scope.gotoMatches = function () {
-      $location.path('/modeSelect');
-    };
-
   });
 
 myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
@@ -646,10 +640,6 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
     var height = $window.innerHeight;
     if ($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth) {
       height = $window.innerHeight * (528 / 320);
-    }
-
-    $scope.goBackToMenu = function () {
-        $location.path('/');
     }
 
     var matchState = stateService.getMatchState();
