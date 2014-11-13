@@ -634,11 +634,6 @@ myApp.controller('gameCtrl',
         }
       }
     });
-
-    $scope.gotoMatches = function () {
-      $location.path('/modeSelect');
-    };
-
   });
 
 myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
