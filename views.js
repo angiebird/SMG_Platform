@@ -269,7 +269,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   	var currentMatchInfo =[];
   	for(i = 0; i < theMatchList.length; i++){
   		var matchInfoObj
-  		if (! theMatchList[i].playersInfo[1]){
+  		if (theMatchList[i].playersInfo[1]){
   			matchInfoObj = {
   								 infoString : theMatchList[i].playersInfo[0].displayName + " vs " + theMatchList[i].playersInfo[1].displayName + " on move " + theMatchList[i].history.moves.length,
   								 joinable : true,
@@ -277,7 +277,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
   								 idx : i
   								}
   		}
-  		else if(theMatchList[i].playersInfo[1]){
+  		else if(!theMatchList[i].playersInfo[1]){
   			matchInfoObj = {
   								 infoString : theMatchList[i].playersInfo[0].displayName + " is awaiting.",
   								 joinable : true,
