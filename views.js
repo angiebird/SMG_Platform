@@ -718,7 +718,9 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
         else
             $scope.totalTies = 0;
 
-        $scope.winPercent = $scope.totalWins / ($scope.totalWins + $scope.totalLoses + $scope.totalTies);
+        if ($scope.winPercent = $scope.totalWins / ($scope.totalWins + $scope.totalLoses + $scope.totalTies)) { }
+        else
+            $scope.winPercent = 0;
     }
 
     getPlayerStats();
