@@ -1,11 +1,16 @@
-<div class="modal-header">
-    <h1 class="modal-title">Match Results</h1>
-</div>
-<div class="centerItem modal-body">
-    Scores: {{winLoseAnnouncement}}
-    <div>&nbsp;</div>
-</div>
-<div class="centerItem">
-    <button class="btn btn-primary" ng-click="goBackToMenu()">Menu</button>
-    <button class="btn btn-primary" ng-click="resumeMatch(match)">Game</button>
-</div>
+
+    <div class="modal-header centerText">
+        <h1 class="modal-title">{{winLoseAnnouncement}}</h1>
+    </div>
+    <div class="modal-body">
+        <span style="font-size:200%;"><em>Current ELO: </em></span>  <button class="btn btn-default" style="font-size:250%">{{playerRank}}</button>
+        <br />
+        <span style="font-size:200%;"><em>Wins/Loses/Ties: </em></span><span style="font-size:250%">{{totalWins}}/{{totalLoses}}/{{totalTies}}</span>
+        <br />
+        <span style="font-size:200%;"><em>Win rate: </em></span><span style="font-size:250%">{{winPercent}}%</span>
+        <div>&nbsp;</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary leftItem" ng-click="goBackToMenu()">Go Back To Menu</button>
+        <button class="btn btn-primary rightItem" ng-click="close()">Close</button>
+    </div>

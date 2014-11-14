@@ -340,6 +340,7 @@ myApp.controller('gameCtrl',
     var myLastState;
     var matchOnGoing = false;
     var myMatchId = theMatch.matchId;
+    var resultsLock = true;
     if(myMatchId !== undefined){
     	matchOnGoing = true;
     }
@@ -393,7 +394,12 @@ myApp.controller('gameCtrl',
       if (matchState.endMatchScores) {
         //$rootScope.endGameMyTurnIndex = myTurnIndex;
         //$location.path('/results');
-        $scope.displayResults();
+        if (resultsLock)
+        {
+            resultsLock = false;
+            $scope.displayResults();
+        }
+        
         return "Match ended with scores: " + matchState.endMatchScores;
       }
       
@@ -643,7 +649,7 @@ myApp.controller('gameCtrl',
 
     $scope.displayResults = function () {
         var modalInstance = $modal.open({
-            templateUrl: 'Results.html',
+            templateUrl: 'results.html',
             controller: 'resultsCtrl'
         });
     };
@@ -659,9 +665,63 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
     }
     */
     $scope.goBackToMenu = function () {
+      $modalInstance.close();
       $location.path('/');
     }
 
+    $scope.close = function () {
+      $modalInstance.close();
+    }
+
+    function sendServerMessage(t, obj) {
+        var type = t;
+        serverApiService.sendMessage(obj, function (response) {
+            processServerResponse(type, response);
+        });
+    };
+
+    function processServerResponse(type, resObj) {
+        if (type === 'GET_PLAYERSTATS') {
+            updatePlayerStats(resObj);
+        } 
+    }
+
+    function getPlayerStats() {
+        var thePlayer = interComService.getUser();
+        var resPlayerStatsObj = [{
+            getPlayerGameStats: {
+                accessSignature: thePlayer.accessSignature,
+                gameId: interComService.getGame().gameId,
+                myPlayerId: thePlayer.playerId
+            }
+        }];
+        sendServerMessage('GET_PLAYERSTATS', resPlayerStatsObj);
+    }
+
+    function updatePlayerStats(obj)
+    {
+        var playerStats = obj[0].playerGameStats;
+        $scope.playerRank = playerStats.rank;
+
+        if (playerStats.outcomesCount.W)
+            $scope.totalWins = playerStats.outcomesCount.W;
+        else
+            $scope.totalWins = 0;
+
+        if (playerStats.outcomesCount.L)
+            $scope.totalLoses = playerStats.outcomesCount.L;
+        else
+            $scope.totalLoses = 0;
+        
+        if (playerStats.outcomesCount.T)
+            $scope.totalTies = playerStats.outcomesCount.T;
+        else
+            $scope.totalTies = 0;
+
+        $scope.winPercent = $scope.totalWins / ($scope.totalWins + $scope.totalLoses + $scope.totalTies);
+    }
+
+    getPlayerStats();
     var matchState = stateService.getMatchState();
     $scope.winLoseAnnouncement = "NOT ASSIGNED";
 
@@ -673,6 +733,8 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
       $scope.winLoseAnnouncement = "PLAYER 1 WINS";
     else if (interComService.getMode() === "passAndPlay" && matchState.endMatchScores[1] === 1)
       $scope.winLoseAnnouncement = "PLAYER 2 WINS";
+    else if (matchState.endMatchScores[0] === matchState.endMatchScores[1])
+      $scope.winLoseAnnouncement = "TIE GAME";
     else
       $scope.winLoseAnnouncement = "YOU LOSE";
 
