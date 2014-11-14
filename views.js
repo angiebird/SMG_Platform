@@ -316,7 +316,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
 })
 
 myApp.controller('gameCtrl',
-  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, $modal, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
     if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   		$location.path('/');
   	}
@@ -391,8 +391,9 @@ myApp.controller('gameCtrl',
       }
       var matchState = stateService.getMatchState();
       if (matchState.endMatchScores) {
-        $rootScope.endGameMyTurnIndex = myTurnIndex;
-        $location.path('/results');
+        //$rootScope.endGameMyTurnIndex = myTurnIndex;
+        //$location.path('/results');
+        $scope.displayResults();
         return "Match ended with scores: " + matchState.endMatchScores;
       }
       
@@ -640,15 +641,23 @@ myApp.controller('gameCtrl',
       $location.path('/modeSelect');
     };
 
+    $scope.displayResults = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'Results.html',
+            controller: 'resultsCtrl'
+        });
+    };
+
   });
 
-myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, $modalInstance, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
     this.name = "resultsCtrl";
+    /*
     var height = $window.innerHeight;
     if ($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth) {
       height = $window.innerHeight * (528 / 320);
     }
-
+    */
     $scope.goBackToMenu = function () {
       $location.path('/');
     }
