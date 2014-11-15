@@ -16,9 +16,23 @@
                 </tab>
             </tabset>
         </div>
+
+    <div class="modal-header centerText">
+        <h1 class="modal-title">{{winLoseAnnouncement}}</h1>
     </div>
     <div class="centerItem" style="position:relative;top:20%;width:75%;height10%">
         <button class="btn btn-primary" ng-click="goBackToMenu" style="width:20%;height:10%;font-size:70%" ">Menu</button>
         <button class="btn btn-primary" ng-click="resumeMatch(match)" style="position:relative;left:60%;width:20%;height:10%;font-size:70%">Game</button>
+    <div class="modal-body">
+        <span style="font-size:200%;"><em>Current ELO: </em></span>  <button class="btn btn-default" style="font-size:250%">{{playerRank}}</button>
+        <br />
+        <span style="font-size:200%;"><em>Wins/Loses/Ties: </em></span><span style="font-size:250%">{{totalWins}}/{{totalLoses}}/{{totalTies}}</span>
+        <br />
+        <span style="font-size:200%;"><em>Win rate: </em></span><span style="font-size:250%">{{winPercent}}%</span>
+        <div>&nbsp;</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary leftItem" ng-click="goBackToMenu()">Go Back To Menu</button>
+        <button class="btn btn-primary rightItem" ng-click="close()">Close</button>
     </div>
 </div>
