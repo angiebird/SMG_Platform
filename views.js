@@ -63,10 +63,11 @@ myApp.controller('routeCtrl',
         }
     });
   })
-myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   platformScaleService.stopScaleService();
   platformScaleService.scaleBody({width: 320, height: 528});
   platformScaleService.startScaleService();
+  interComService.resetTimer();
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
@@ -189,11 +190,25 @@ myApp.controller('loginCtrl', function($routeParams, $location, $scope, $rootSco
   };
 })
 
-myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   this.name = "modeCtrl";
+  $scope.allMatches = true;
+  $scope.myMatches = false;
+  $scope.listMode = "all";
+  $scope.displayTab = function(tab){
+  	if(tab === "allMatches"){
+  		$scope.allMatches = true;
+  		$scope.myMatches = false;
+  	}
+  	else if(tab === "myMatches"){
+  		$scope.allMatches = false;
+  		$scope.myMatches = true;
+  	}
+  }
   platformScaleService.stopScaleService();
   platformScaleService.scaleBody({width: 320, height: 528});
   platformScaleService.startScaleService();
+  interComService.resetTimer();
   var height = $window.innerHeight;
   if($window.innerHeight < 528 && $window.innerHeight < $window.innerWidth ){
   	height = $window.innerHeight * (528/320);
@@ -316,13 +331,14 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $rootScop
 })
 
 myApp.controller('gameCtrl',
-  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+  function($routeParams, $location, $sce, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
     if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   		$location.path('/');
   	}
   	platformScaleService.stopScaleService();
   	platformScaleService.scaleBody({width: 320, height: 320});
   	platformScaleService.startScaleService();
+  	interComService.resetTimer();
     var theGame = interComService.getGame();
     var thePlayer = interComService.getUser();
     var theMatch = interComService.getMatch();
@@ -561,6 +577,7 @@ myApp.controller('gameCtrl',
         }
       }
     }
+    if (!interComService.isMessagerStarted()){
     platformMessageService.addMessageListener(function(message) {
       //this function only handles local messages, server messages will be filtered out
       if (message.reply === undefined) {
@@ -608,10 +625,12 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('NEW_MATCH', newMatchObj);
-              if (AutoGameRefresher === undefined) {
-                AutoGameRefresher = setInterval(function() {
+            var t = interComService.isTimerStarted();
+              if (! interComService.isTimerStarted()) {
+                AutoGameRefresher = $interval(function() {
                   checkGameUpdates()
                 }, 10000);
+                interComService.registerTimer(AutoGameRefresher);
               }
             } else {
               numOfMove = numOfMove + 1;
@@ -625,16 +644,19 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('MADE_MOVE', moveObj);
-              if (AutoGameRefresher === undefined) {
-                AutoGameRefresher = setInterval(function() {
+              if (! interComService.isTimerStarted()) {
+                AutoGameRefresher = $interval(function() {
                   checkGameUpdates()
                 }, 10000);
+                interComService.registerTimer(AutoGameRefresher);
               }
             }
           }
         }
       }
     });
+    interComService.messagerStarted();
+    };
   });
 
 myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
