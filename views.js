@@ -130,7 +130,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
   function getGames() {
     sendServerMessage('GET_GAMES', [{
-      getGames: {}
+      getGames: {gameId: "5682617542246400"}
     }]);
   }
 
@@ -149,6 +149,11 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
     }
     $scope.availableGames = gamelist;
     interComService.setGameList(gamelist);
+
+    if (gamelist.length > 0) {
+    	$scope.gameName = gamelist[0].gameName;
+    	interComService.setGame(gamelist[0]);
+    }
   }
 
   function updatePlayerInfo(obj) {
