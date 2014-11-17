@@ -446,7 +446,7 @@ myApp.controller('gameCtrl',
         handleUpdates(resObj);
       } else if (type === 'NEW_MATCH' || type === 'RESERVE_MATCH') {
         handleResAutoMatch(resObj);
-      }
+      } 
     }
 
     function isEqual(object1, object2) {
@@ -680,6 +680,13 @@ myApp.controller('gameCtrl',
             controller: 'resultsCtrl'
         });
     };
+    $scope.dismissMatch = function() {
+    	var dismissObj =[{
+    		dismissMatch: {matchId:theMatch.matchId, myPlayerId:thePlayer.playerId,accessSignature:thePlayer.accessSignature}
+    	}];
+      sendServerMessage('DISMISS_MATCH', dismissObj);
+      $location.path('/');
+    }
 
   });
 
