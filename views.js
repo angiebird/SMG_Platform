@@ -331,11 +331,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
 })
 
 myApp.controller('gameCtrl',
-<<<<<<< HEAD
   function($routeParams, $location, $sce, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
-=======
-  function($routeParams, $location, $sce, $scope, $rootScope, $log, $window, $modal, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
->>>>>>> FETCH_HEAD
     if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   		$location.path('/');
   	}
@@ -666,10 +662,8 @@ myApp.controller('gameCtrl',
         }
       }
     });
-<<<<<<< HEAD
     interComService.messagerStarted();
     };
-=======
 
     $scope.gotoMatches = function () {
       $location.path('/modeSelect');
@@ -682,7 +676,6 @@ myApp.controller('gameCtrl',
         });
     };
 
->>>>>>> FETCH_HEAD
   });
 
 myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $rootScope, $log, $window, $modalInstance, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
