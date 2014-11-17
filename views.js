@@ -336,7 +336,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
 })
 
 myApp.controller('gameCtrl',
-  function($routeParams, $location, $sce, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
+  function($routeParams, $location, $sce, $scope, $interval, $rootScope, $log, $window, $modal, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
     if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   		$location.path('/');
   	}
