@@ -121,22 +121,10 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   }
 
   function updateGameList(obj) {
-    var gamesObj = obj[0].games;
-    var gamelist = [];
-    var i;
-    for (i = 0; i < gamesObj.length; i++) {
-      var g = {
-        gameId: gamesObj[i].gameId,
-        gameName: gamesObj[i].languageToGameName.en,
-        gameUrl: gamesObj[i].gameUrl,
-        developerEmail: gamesObj[i].gameDeveloperEmail
-      };
-      gamelist.push(g)
-    }
+    var gamelist = obj[0].games;
     interComService.setGameList(gamelist);
-
     if (gamelist.length > 0) {
-    	$scope.gameName = gamelist[0].gameName;
+    	$scope.gameName = gamelist[0].languageToGameName.en;
     	interComService.setGame(gamelist[0]);
     }
   }
@@ -229,7 +217,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
     var resMatchObj = [{
       getPlayerMatches: {
         gameId: theGame.gameId,
-        myPlayerId: thePlayer.playerId,
+        myPlayerId: thePlayer.myPlayerId,
         getCommunityMatches: false,
         accessSignature: thePlayer.accessSignature
       }
@@ -290,7 +278,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   	if(theMatch !== undefined){
   		interComService.setMatch(theMatch);
     	$location.path('game');
-    	if(theMatch.playersInfo[0].playerId === thePlayer.playerId){
+    	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
     		interComService.setPlayMode('playWhite');
     	}
     	else{
@@ -314,7 +302,7 @@ myApp.controller('gameCtrl',
     var thePlayer = interComService.getUser();
     var theMatch = interComService.getMatch();
     $scope.selectedGame = theGame.gameId;
-    $scope.myPlayerId = thePlayer.playerId;
+    $scope.myPlayerId = thePlayer.myPlayerId;
     $scope.myAccessSignature = thePlayer.accessSignature;
     $scope.displayName = thePlayer.displayName;
     $scope.avatarImageUrl = thePlayer.avatarImageUrl;
@@ -344,7 +332,7 @@ myApp.controller('gameCtrl',
       else if(theMatch.playersInfo !== undefined){
       	for(var i = 0; i < theMatch.playersInfo.length; i++){
       		var p = theMatch.playersInfo[i];
-      		if(p && p.playerId !== $scope.myPlayerId){
+      		if(p && p.myPlayerId !== $scope.myPlayerId){
       			$scope.displayName2 = p.displayName;
       			$scope.avatarImageUrl2 = p.avatarImageUrl;
       		}
@@ -647,7 +635,7 @@ myApp.controller('gameCtrl',
     };
     $scope.dismissMatch = function() {
     	var dismissObj =[{
-    		dismissMatch: {matchId:theMatch.matchId, myPlayerId:thePlayer.playerId,accessSignature:thePlayer.accessSignature}
+    		dismissMatch: {matchId:theMatch.matchId, myPlayerId:thePlayer.myPlayerId,accessSignature:thePlayer.accessSignature}
     	}];
       sendServerMessage('DISMISS_MATCH', dismissObj);
       $location.path('/');
@@ -691,7 +679,7 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
             getPlayerGameStats: {
                 accessSignature: thePlayer.accessSignature,
                 gameId: interComService.getGame().gameId,
-                myPlayerId: thePlayer.playerId
+                myPlayerId: thePlayer.myPlayerId
             }
         }];
         sendServerMessage('GET_PLAYERSTATS', resPlayerStatsObj);

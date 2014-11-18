@@ -32,8 +32,8 @@ angular.module('myApp')
 		if (obj.displayName !== undefined){
 			user.displayName = obj.displayName;
 		}
-		if (obj.playerId !== undefined){
-			user.playerId = obj.playerId;
+		if (obj.myPlayerId !== undefined){
+			user.myPlayerId = obj.myPlayerId;
 		}
 		if (obj.accessSignature !== undefined){
 			user.accessSignature = obj.accessSignature;
