@@ -531,6 +531,10 @@ myApp.controller('gameCtrl',
         for (i = 0; i < matchObj.length; i++) {
           if (myMatchId === matchObj[i].matchId) {
             var movesObj = matchObj[i].history.moves;
+            numOfMove = movesObj.length-1;
+            theMatch = matchObj[i];
+            interComService.setMatch(theMatch);
+            $scope.updateOpponent();
             if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
             	var data;
               if(movesObj.length >= 2){
@@ -541,11 +545,7 @@ myApp.controller('gameCtrl',
               }
               stateService.gotBroadcastUpdateUi(data);
               myLastMove = movesObj[movesObj.length - 1];
-              numOfMove = numOfMove + 1;
             }
-            theMatch = matchObj[i];
-            interComService.setMatch(theMatch);
-            $scope.updateOpponent();
           }
         }
       }
