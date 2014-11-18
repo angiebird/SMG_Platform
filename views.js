@@ -71,8 +71,38 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
+
   getGames();
-  $scope.guestLogin = function() {
+  updatePlayer();
+
+  $scope.guestLogin = guestLogin;
+  $scope.gotoMatches = function() {
+  	$location.path('/modeSelect');
+  };
+
+  $scope.gotoGame = function (playMode) {
+    interComService.setPlayMode(playMode);
+    $location.path('game');
+  };
+  
+  $scope.gotoResults = function () {
+    $location.path('/results');
+  };
+
+  function updatePlayer() {
+    if (typeof(Storage) != "undefined") {
+      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
+    }
+    if (playerInfo != null) {
+    	$scope.playerInfo = playerInfo;
+      interComService.setUser(playerInfo);
+    }
+    else{
+    	guestLogin();
+    }
+  }
+
+  function guestLogin() {
     var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
     var rand = Math.floor(Math.random() * 5);
     var name = avatarLs[rand] + Math.floor(Math.random() * 1000);
@@ -85,19 +115,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
     }];
     sendServerMessage('REGISTER_PLAYER', obj);
   };
-  $scope.updatePlayer = function() {
-    if (typeof(Storage) != "undefined") {
-      playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-    }
-    if (playerInfo != null) {
-    	$scope.playerInfo = playerInfo;
-      interComService.setUser(playerInfo);
-    }
-  }
-  $scope.updatePlayer();
-  if (playerInfo == null) {
-  	$scope.guestLogin();
-  }
 
   function sendServerMessage(t, obj) {
     var type = t;
@@ -132,21 +149,9 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   function updatePlayerInfo(obj) {
     playerInfo = obj[0].playerInfo;
     localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
-    $scope.updatePlayer();
+    updatePlayer();
   };
 
-  $scope.gotoMatches = function() {
-  	$location.path('/modeSelect');
-  };
-
-  $scope.gotoGame = function (playMode) {
-    interComService.setPlayMode(playMode);
-    $location.path('game');
-  };
-  
-  $scope.gotoResults = function () {
-    $location.path('/results');
-  };
 })
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
@@ -326,7 +331,7 @@ myApp.controller('gameCtrl',
       else if(theMatch.playersInfo !== undefined){
       	for(var i = 0; i < theMatch.playersInfo.length; i++){
       		var p = theMatch.playersInfo[i];
-      		if(p && p.myPlayerId !== $scope.myPlayerId){
+      		if(p && p.playerId !== $scope.myPlayerId){
       			$scope.displayName2 = p.displayName;
       			$scope.avatarImageUrl2 = p.avatarImageUrl;
       		}
