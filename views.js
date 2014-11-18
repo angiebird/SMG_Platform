@@ -156,8 +156,8 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   this.name = "modeCtrl";
-  $scope.allMatches = true;
-  $scope.myMatches = false;
+  $scope.allMatches = false;
+  $scope.myMatches = true;
   $scope.listMode = "all";
   $scope.displayTab = function(tab){
   	if(tab === "allMatches"){
@@ -190,7 +190,8 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   var thePlayer = interComService.getUser();
   var theMatchList = [];
   var theMatch = undefined;
-  $scope.matchStrings = [];
+  $scope.myMatchStrings = [];
+  $scope.allMatchStrings = [];
   $scope.playMode = "playWhite"
   var game = interComService.getGame();
   this.params = $routeParams;
@@ -266,7 +267,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   		}
   		currentMatchInfo.push(matchInfoObj);
   	}
-  	$scope.matchStrings = currentMatchInfo;
+  	$scope.myMatchStrings = currentMatchInfo;
   }
   function updateMatchList(resObj){
   	theMatchList = resObj[0].matches;
@@ -276,13 +277,13 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   function resumeMatch(){
   	if(theMatch !== undefined){
   		interComService.setMatch(theMatch);
-    	$location.path('game');
     	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
     		interComService.setPlayMode('playWhite');
     	}
     	else{
     		interComService.setPlayMode('playBlack');
     	}
+    	$location.path('game');
   	}
   }
   $scope.resumeMatch = resumeMatch;

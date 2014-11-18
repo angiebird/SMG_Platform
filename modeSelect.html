@@ -2,33 +2,33 @@
 	<div style="position:relative;top:10%;display:block;width:100%;height:70%;">
 		<div class="centerItem" style="width:70%;height100%;">
 			<div class="btn-group centerItem">
-        		<label class="btn btn-default" ng-model="listMode" ng-click="displayTab('allMatches')" btn-radio="'all'" style="width:50%; font-size : 90%;">All Matches</label>
         		<label class="btn btn-default" ng-model="listMode" ng-click="displayTab('myMatches')" btn-radio="'my'" style="width:50%; font-size : 90%;">My Maches</label>
+        		<label class="btn btn-default" ng-model="listMode" ng-click="displayTab('allMatches')" btn-radio="'all'" style="width:50%; font-size : 90%;">All Matches</label>
     		</div>
-    		<div ng-show = "allMatches">
+    		<div ng-show = "myMatches">
     			<div ng-style="matchListStyle">
     				<div>&nbsp;</div>
-    				<div class="centerItem" ng-model="matchStrings" ng-repeat="match in matchStrings" style="position:relative;width:90%;height15%;font-size:90%;">
+    				<div class="centerItem" ng-model="matchStrings" ng-repeat="match in myMatchStrings" style="position:relative;width:90%;height15%;font-size:90%;">
     					<button ng-class="{btn :true, 'btn-success' :(match.joinable), 'btn-danger' : (!match.joinable), 'btn-sm':true}" ng-click="matchListSelected(match)" style="width:100%;font-size:90%;">{{match.infoString}}</button>
     					<div>&nbsp;</div>
 					</div>
 					<br />
 				</div>
 			</div>
-    		<div ng-show = "myMatches">
+    		<div ng-show = false>
     			<div ng-style="matchListStyle">
     				<div>&nbsp;</div>
-    				<div class="centerItem" ng-model="matchStrings" ng-repeat="match in matchStrings" style="position:relative;width:90%;height15%;font-size:90%;">
-    					<button class="btn btn-success btn-sm" ng-click="" style="width:100%;font-size:90%">123</button>
+    				<div class="centerItem" ng-model="matchStrings" ng-repeat="match in allMatchStrings" style="position:relative;width:90%;height15%;font-size:90%;">
+    					<button ng-class="{btn :true, 'btn-success' :(match.joinable), 'btn-danger' : (!match.joinable), 'btn-sm':true}" ng-click="matchListSelected(match)" style="width:100%;font-size:90%;">{{match.infoString}}</button>
     					<div>&nbsp;</div>
 					</div>
 					<br />
 				</div>
 			</div>
-			<button ng-model="joinBtTitle" class="btn btn-primary centerItem" ng-click="resumeMatch()" style="width:50%;height:12%;font-size:90%"">Resume Match</button>
     	</div>
+		<button ng-model="joinBtTitle" class="btn btn-primary centerItem" ng-click="resumeMatch()" style="width:50%;height:12%;font-size:90%"">Resume Match</button>
 	</div>
-	<div class="centerItem" style="position:relative;top:20%;width:75%;height10%">
+	<div class="centerItem" style="position:relative;top:20%;width:75%;">
 			<button class="btn btn-primary" ng-click="goBackToMenu()" style="width:20%;height:10%;font-size:70%"">Menu</button>
 			<button class="btn btn-primary" ng-click="resumeMatch(match)" style="position:relative;left:60%;width:20%;height:10%;font-size:70%">Game</button>
 	</div>
