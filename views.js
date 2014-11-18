@@ -171,10 +171,6 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   	"overflow": "auto"
   }
 
-  if (interComService.getUser() === undefined || interComService.getGame() === undefined){
-  	$location.path('/');
-  }
-
   $scope.allMatches = false;
   $scope.myMatches = true;
   $scope.listMode = "all";
@@ -185,8 +181,8 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
 
   var theGame = interComService.getGame();
   var thePlayer = interComService.getUser();
+  var theMatch = interComService.getMatch();
   var theMatchList = [];
-  var theMatch = undefined;
   this.params = $routeParams;
 
   getMatchList();
@@ -197,8 +193,14 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
     $location.path('game');
   };
 
-  $scope.goBackToMenu = function(){
+  $scope.gotoMenu = function(){
   	$location.path('/');
+  };
+
+  $scope.gotoGame = function(){
+  	if(theMatch.matchId !== undefined){
+  		$location.path('/game');
+  	}
   };
 
   $scope.matchListSelected = function(match){
@@ -224,7 +226,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   }
 
   $scope.resumeMatch = function(){
-  	if(theMatch !== undefined){
+  	if(theMatch.matchId !== undefined){
   		interComService.setMatch(theMatch);
     	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
     		interComService.setPlayMode('playWhite');
@@ -517,6 +519,7 @@ myApp.controller('gameCtrl',
           stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move), null);
         }
         theMatch = matchObj;
+        interComService.setMatch(theMatch);
         $scope.updateOpponent();
       }
     }
@@ -541,6 +544,7 @@ myApp.controller('gameCtrl',
               numOfMove = numOfMove + 1;
             }
             theMatch = matchObj[i];
+            interComService.setMatch(theMatch);
             $scope.updateOpponent();
           }
         }
