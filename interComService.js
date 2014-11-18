@@ -38,8 +38,8 @@ angular.module('myApp')
 		if (obj.accessSignature !== undefined){
 			user.accessSignature = obj.accessSignature;
 		}
-		if (obj.avartarUrl !== undefined){
-			user.avartarUrl = obj.avartarUrl;
+		if (obj.avatarImageUrl !== undefined){
+			user.avatarImageUrl = obj.avatarImageUrl;
 		}
 	}
 	function setGame(obj){

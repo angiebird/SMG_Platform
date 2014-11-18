@@ -71,9 +71,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   this.name = "loginCtrl";
   this.params = $routeParams;
   var playerInfo = null;
-  this.playerInfo = playerInfo;
-  $scope.matchDisplayStrings = [];
-  var theMatchList = [];
   getGames();
   $scope.guestLogin = function() {
     var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
@@ -91,21 +88,10 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   $scope.updatePlayer = function() {
     if (typeof(Storage) != "undefined") {
       playerInfo = angular.fromJson(localStorage.getItem("playerInfo"));
-      //console.log("playerInfo" + localStorage.getItem("playerInfo"));
     }
     if (playerInfo != null) {
-      $scope.displayName = playerInfo.displayName;
-      $scope.avatarImageUrl = playerInfo.avatarImageUrl;
-      $scope.myPlayerId = playerInfo.myPlayerId;
-      $scope.myAccessSignature = playerInfo.accessSignature;
-      $scope.myTokens = playerInfo.tokens;
-      var userObj = {
-        displayName: $scope.displayName,
-        playerId: $scope.myPlayerId,
-        accessSignature: $scope.myAccessSignature,
-        avartarUrl: $scope.avatarImageUrl
-      };
-      interComService.setUser(userObj);
+    	$scope.playerInfo = playerInfo;
+      interComService.setUser(playerInfo);
     }
   }
   $scope.updatePlayer();
@@ -158,7 +144,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   function updatePlayerInfo(obj) {
     playerInfo = obj[0].playerInfo;
     localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
-    //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
     $scope.updatePlayer();
   };
 
@@ -332,7 +317,7 @@ myApp.controller('gameCtrl',
     $scope.myPlayerId = thePlayer.playerId;
     $scope.myAccessSignature = thePlayer.accessSignature;
     $scope.displayName = thePlayer.displayName;
-    $scope.avatarImageUrl = thePlayer.avartarUrl;
+    $scope.avatarImageUrl = thePlayer.avatarImageUrl;
     $scope.thePlayer = angular.toJson(thePlayer);
     $scope.theGame = angular.toJson(theGame);
     var myLastMove;
@@ -347,7 +332,6 @@ myApp.controller('gameCtrl',
     	matchOnGoing = true;
     }
     $scope.playMode = interComService.getMode();
-    var playerInfo = null;
     $scope.gameUrl = $sce.trustAsResourceUrl(theGame.gameUrl);
     $scope.avatarImageUrl2 = "img/unknown.png";
 
