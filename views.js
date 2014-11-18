@@ -264,14 +264,8 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   	$scope.matchStrings = currentMatchInfo;
   }
   function updateMatchList(resObj){
-  	//$scope.theMatchList = angular.toJson(resObj);
-  	var matches = resObj[0].matches;
-  	for(var i = 0; i < matches.length; i++){
-  		theMatchList.push(matches[i]);
-  	}
+  	theMatchList = resObj[0].matches;
   	matchInfoForDisplay();
-  	//$scope.theMatchListJson = angular.toJson(theMatchList, true);
-  	//$scope.theMatchList = theMatchList;
   };
   
   function resumeMatch(){
