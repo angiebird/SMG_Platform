@@ -156,19 +156,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
 myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval, $rootScope, $log, $window, platformMessageService, stateService, serverApiService, platformScaleService, interComService) {
   this.name = "modeCtrl";
-  $scope.allMatches = false;
-  $scope.myMatches = true;
-  $scope.listMode = "all";
-  $scope.displayTab = function(tab){
-  	if(tab === "allMatches"){
-  		$scope.allMatches = true;
-  		$scope.myMatches = false;
-  	}
-  	else if(tab === "myMatches"){
-  		$scope.allMatches = false;
-  		$scope.myMatches = true;
-  	}
-  }
+
   platformScaleService.stopScaleService();
   platformScaleService.scaleBody({width: 320, height: 528});
   platformScaleService.startScaleService();
@@ -182,30 +170,37 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   	"height" : Math.floor((height*0.4)).toString()+"px",
   	"overflow": "auto"
   }
+
   if (interComService.getUser() === undefined || interComService.getGame() === undefined){
   	$location.path('/');
   }
+
+  $scope.allMatches = false;
+  $scope.myMatches = true;
+  $scope.listMode = "all";
   $scope.joinBtTitle = "Join Game"
+  $scope.myMatchStrings = [];
+  $scope.allMatchStrings = [];
+  $scope.playMode = "playWhite"
+
   var theGame = interComService.getGame();
   var thePlayer = interComService.getUser();
   var theMatchList = [];
   var theMatch = undefined;
-  $scope.myMatchStrings = [];
-  $scope.allMatchStrings = [];
-  $scope.playMode = "playWhite"
-  var game = interComService.getGame();
   this.params = $routeParams;
-  $scope.$watch('playMode', function() {
-    $scope.currentPlayMode = $scope.playMode
-  });
+
+  getMatchList();
+
+
   $scope.startGame = function() {
     interComService.setPlayMode($scope.currentPlayMode);
     $location.path('game');
-  }
+  };
+
   $scope.goBackToMenu = function(){
   	$location.path('/');
-  }
-  getMatchList();
+  };
+
   $scope.matchListSelected = function(match){
   	$scope.selectedMatch = match;
   	if(match.joinable){
@@ -215,10 +210,32 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   		$scope.joinBtTitle = "Watch Game"
   	}
   	theMatch = theMatchList[match.idx];
+  };
+
+  $scope.displayTab = function(tab){
+  	if(tab === "allMatches"){
+  		$scope.allMatches = true;
+  		$scope.myMatches = false;
+  	}
+  	else if(tab === "myMatches"){
+  		$scope.allMatches = false;
+  		$scope.myMatches = true;
+  	}
   }
-  $scope.joinMatch = function(){
-  	//get match ID from $scope.selectedMatch; check if it is defined first
+
+  $scope.resumeMatch = function(){
+  	if(theMatch !== undefined){
+  		interComService.setMatch(theMatch);
+    	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
+    		interComService.setPlayMode('playWhite');
+    	}
+    	else{
+    		interComService.setPlayMode('playBlack');
+    	}
+    	$location.path('game');
+  	}
   }
+
   function getMatchList(){
     var resMatchObj = [{
       getPlayerMatches: {
@@ -274,19 +291,6 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   	matchInfoForDisplay();
   };
   
-  function resumeMatch(){
-  	if(theMatch !== undefined){
-  		interComService.setMatch(theMatch);
-    	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
-    		interComService.setPlayMode('playWhite');
-    	}
-    	else{
-    		interComService.setPlayMode('playBlack');
-    	}
-    	$location.path('game');
-  	}
-  }
-  $scope.resumeMatch = resumeMatch;
 })
 
 myApp.controller('gameCtrl',
