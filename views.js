@@ -147,7 +147,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
       };
       gamelist.push(g)
     }
-    $scope.availableGames = gamelist;
     interComService.setGameList(gamelist);
 
     if (gamelist.length > 0) {
@@ -161,24 +160,6 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
     localStorage.setItem("playerInfo", angular.toJson(playerInfo, true));
     //console.log("playerInfo: " + localStorage.getItem("playerInfo"));
     $scope.updatePlayer();
-  };
-  $scope.gameSelected = function() {
-    console.log("game Selected");
-    var i;
-    for (i = 0; i < $scope.availableGames.length; i++) {
-      if ($scope.selectedGame === $scope.availableGames[i].gameId) {
-        $scope.gameUrl = $scope.availableGames[i].gameUrl;
-        $scope.developerEmail = $scope.availableGames[i].developerEmail;
-      }
-    }
-    if ($scope.myPlayerId !== undefined) {
-      var gameObj = {
-        gameId: $scope.selectedGame,
-        gameUrl: $scope.gameUrl,
-        developerEmail: $scope.developerEmail
-      };
-      interComService.setGame(gameObj);
-    }
   };
 
   $scope.gotoMatches = function() {
