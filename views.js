@@ -106,7 +106,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
     var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
     var rand = Math.floor(Math.random() * 5);
     var name = avatarLs[rand] + Math.floor(Math.random() * 1000);
-    var img = "img/" + avatarLs[rand] + ".png";
+    var img = "https://angiebird.github.io/SMG_Platform/img/" + avatarLs[rand] + ".png";
     var obj = [{
       registerPlayer: {
         displayName: name,
