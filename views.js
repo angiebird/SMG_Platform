@@ -133,7 +133,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
   function getGames() {
     sendServerMessage('GET_GAMES', [{
-      getGames: {gameId: "5769015641243648"}
+      getGames: {gameId: "5207025210359808"}
     }]);
   }
 
