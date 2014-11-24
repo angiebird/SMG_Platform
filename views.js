@@ -390,7 +390,8 @@ myApp.controller('gameCtrl',
       if (matchState.endMatchScores) {
         //$rootScope.endGameMyTurnIndex = myTurnIndex;
         //$location.path('/results');
-        if (resultsLock)
+	$log.info(interComService.getMatch());
+        if (resultsLock && interComService.getMatch().endMatchScores)
         {
             resultsLock = false;
             $scope.displayResults();
