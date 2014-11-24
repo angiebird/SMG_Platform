@@ -133,7 +133,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
   function getGames() {
     sendServerMessage('GET_GAMES', [{
-      getGames: {gameId: "5207025210359808"}
+      getGames: {gameId: "5769015641243648"}
     }]);
   }
 
@@ -228,7 +228,7 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   $scope.resumeMatch = function(){
   	if(theMatch.matchId !== undefined){
   		interComService.setMatch(theMatch);
-    	if(theMatch.playersInfo[0].myPlayerId=== thePlayer.myPlayerId){
+    	if(theMatch.playersInfo[0].playerId=== thePlayer.myPlayerId){
     		interComService.setPlayMode('playWhite');
     	}
     	else{
@@ -348,6 +348,22 @@ myApp.controller('gameCtrl',
     $scope.updateOpponent();
 
     var gotGameReady = false;
+
+    function resumeTurns()
+    {
+        if (theMatch.history !== undefined)
+        {
+            if (theMatch.playersInfo[0].playerId === thePlayer.myPlayerId)
+            {
+                myTurnIndex = 0;
+            }
+            else if (theMatch.playersInfo[1].playerId === thePlayer.myPlayerId)
+            {
+                myTurnIndex = 1;
+            }
+        }
+    }
+    resumeTurns();
 
     function startNewMatch() {
       stateService.startNewMatch();
