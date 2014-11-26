@@ -763,6 +763,6 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
     }
     else
     {
-        $scope.showOfflineNote = true;
+        $scope.showOfflineNote = false;
     }
 });
