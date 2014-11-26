@@ -333,6 +333,10 @@ myApp.controller('gameCtrl',
     var gotGameReady = false;
     resumeTurns();
 
+    AutoGameRefresher = $interval(function() {
+      checkGameUpdates()
+    }, 10000);
+
 
     function updateOpponent() {
       if ($scope.playMode == "playAgainstTheComputer") {
@@ -391,7 +395,7 @@ myApp.controller('gameCtrl',
       if (matchState.endMatchScores) {
         //$rootScope.endGameMyTurnIndex = myTurnIndex;
         //$location.path('/results');
-	$log.info(interComService.getMatch());
+      	$log.info(interComService.getMatch());
         if (resultsLock && interComService.getMatch().endMatchScores)
         {
             resultsLock = false;
@@ -520,15 +524,17 @@ myApp.controller('gameCtrl',
     }
 
     function checkGameUpdates() {
-      var resMatchObj = [{
-        getPlayerMatches: {
-          gameId: $scope.selectedGame,
-          myPlayerId: $scope.myPlayerId,
-          getCommunityMatches: false,
-          accessSignature: $scope.myAccessSignature
-        }
-      }];
-      sendServerMessage('CHECK_UPDATE', resMatchObj);
+    	if($scope.selectedGame){
+        var resMatchObj = [{
+          getPlayerMatches: {
+            gameId: $scope.selectedGame,
+            myPlayerId: $scope.myPlayerId,
+            getCommunityMatches: false,
+            accessSignature: $scope.myAccessSignature
+          }
+        }];
+        sendServerMessage('CHECK_UPDATE', resMatchObj);
+    	}
     }
 
     function handleResAutoMatch(message) {
@@ -621,9 +627,6 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('NEW_MATCH', newMatchObj);
-              AutoGameRefresher = $interval(function() {
-                checkGameUpdates()
-              }, 10000);
             } else {
               numOfMove = numOfMove + 1;
               var moveObj = [{
@@ -636,9 +639,6 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('MADE_MOVE', moveObj);
-              AutoGameRefresher = $interval(function() {
-                checkGameUpdates()
-              }, 10000);
             }
           }
         }
@@ -646,16 +646,19 @@ myApp.controller('gameCtrl',
     });
 
     $scope.gotoMatches = function () {
+      $interval.cancel(AutoGameRefresher);
       $location.path('/modeSelect');
     };
 
     $scope.displayResults = function () {
+      $interval.cancel(AutoGameRefresher);
         var modalInstance = $modal.open({
             templateUrl: 'results.html',
             controller: 'resultsCtrl'
         });
     };
     $scope.dismissMatch = function() {
+      $interval.cancel(AutoGameRefresher);
     	var dismissObj =[{
     		dismissMatch: {matchId:theMatch.matchId, myPlayerId:thePlayer.myPlayerId,accessSignature:thePlayer.accessSignature}
     	}];
