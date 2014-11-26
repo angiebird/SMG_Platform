@@ -326,11 +326,15 @@ myApp.controller('gameCtrl',
     	matchOnGoing = true;
     }
     $scope.playMode = interComService.getMode();
+    stateService.setPlayMode($scope.playMode);
     $scope.gameUrl = $sce.trustAsResourceUrl(theGame.gameUrl);
     $scope.avatarImageUrl2 = "img/unknown.png";
+    updateOpponent();
+    var gotGameReady = false;
+    resumeTurns();
 
 
-    $scope.updateOpponent = function() {
+    function updateOpponent() {
       if ($scope.playMode == "playAgainstTheComputer") {
         $scope.displayName2 = "computer";
         $scope.avatarImageUrl2 = "img/computer.png";
@@ -345,9 +349,7 @@ myApp.controller('gameCtrl',
       	}
       }
     };
-    $scope.updateOpponent();
 
-    var gotGameReady = false;
 
     function resumeTurns()
     {
@@ -363,7 +365,6 @@ myApp.controller('gameCtrl',
             }
         }
     }
-    resumeTurns();
 
     function startNewMatch() {
       stateService.startNewMatch();
@@ -411,7 +412,6 @@ myApp.controller('gameCtrl',
         return "Opponent's turn.";
     };
 
-    stateService.setPlayMode($scope.playMode);
 
     function sendServerMessage(t, obj) {
       var type = t;
@@ -542,7 +542,7 @@ myApp.controller('gameCtrl',
         }
         theMatch = matchObj;
         interComService.setMatch(theMatch);
-        $scope.updateOpponent();
+        updateOpponent();
       }
     }
 
@@ -556,7 +556,7 @@ myApp.controller('gameCtrl',
             numOfMove = movesObj.length-1;
             theMatch = matchObj[i];
             interComService.setMatch(theMatch);
-            $scope.updateOpponent();
+            updateOpponent();
             if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
             	var data;
               if(movesObj.length >= 2){
@@ -572,7 +572,8 @@ myApp.controller('gameCtrl',
         }
       }
     }
-    if (!interComService.isMessagerStarted()){
+
+    platformMessageService.removeMessageListener();
     platformMessageService.addMessageListener(function(message) {
       //this function only handles local messages, server messages will be filtered out
       if (message.reply === undefined) {
@@ -620,13 +621,9 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('NEW_MATCH', newMatchObj);
-            var t = interComService.isTimerStarted();
-              if (! interComService.isTimerStarted()) {
-                AutoGameRefresher = $interval(function() {
-                  checkGameUpdates()
-                }, 10000);
-                interComService.registerTimer(AutoGameRefresher);
-              }
+              AutoGameRefresher = $interval(function() {
+                checkGameUpdates()
+              }, 10000);
             } else {
               numOfMove = numOfMove + 1;
               var moveObj = [{
@@ -639,19 +636,14 @@ myApp.controller('gameCtrl',
                 }
               }];
               sendServerMessage('MADE_MOVE', moveObj);
-              if (! interComService.isTimerStarted()) {
-                AutoGameRefresher = $interval(function() {
-                  checkGameUpdates()
-                }, 10000);
-                interComService.registerTimer(AutoGameRefresher);
-              }
+              AutoGameRefresher = $interval(function() {
+                checkGameUpdates()
+              }, 10000);
             }
           }
         }
       }
     });
-    interComService.messagerStarted();
-    };
 
     $scope.gotoMatches = function () {
       $location.path('/modeSelect');
