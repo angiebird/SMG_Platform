@@ -133,7 +133,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
   function getGames() {
     sendServerMessage('GET_GAMES', [{
-      getGames: {gameId: "5207025210359808"}
+      getGames: { gameId: "5207025210359808" }
     }]);
   }
 
@@ -392,6 +392,11 @@ myApp.controller('gameCtrl',
         //$location.path('/results');
 	$log.info(interComService.getMatch());
         if (resultsLock && interComService.getMatch().endMatchScores)
+        {
+            resultsLock = false;
+            $scope.displayResults();
+        }
+        else if (resultsLock && ($scope.playMode === 'passAndPlay'  || $scope.playMode === 'playAgainstTheComputer'))
         {
             resultsLock = false;
             $scope.displayResults();
@@ -730,7 +735,7 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
         else
             $scope.totalTies = 0;
 
-        if ($scope.winPercent = $scope.totalWins / ($scope.totalWins + $scope.totalLoses + $scope.totalTies)) { }
+        if ($scope.winPercent = $scope.totalWins / ($scope.totalWins + $scope.totalLoses + $scope.totalTies) * 100) { }
         else
             $scope.winPercent = 0;
     }
@@ -752,4 +757,12 @@ myApp.controller('resultsCtrl', function ($routeParams, $location, $scope, $root
     else
       $scope.winLoseAnnouncement = "YOU LOSE";
 
+    if ((interComService.getMode() === "passAndPlay") || (interComService.getMode() === "playAgainstTheComputer"))
+    {
+        $scope.showOfflineNote = true;
+    }
+    else
+    {
+        $scope.showOfflineNote = true;
+    }
 });

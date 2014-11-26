@@ -1,11 +1,14 @@
 
 <div class="modal-header centerText">
     <h1 class="modal-title">{{winLoseAnnouncement}}</h1>
+    <h4 style="color:gray" ng-show="showOfflineNote">(offline games do not count towards statistics)</h4>
 </div>
 <div class="modal-body">
+    <div style="font-size:200%; text-align:center;">My Online Statistics</div>
+    <br />
     <span style="font-size:200%;"><em>Current ELO: </em></span>  <button class="btn btn-default" style="font-size:250%">{{playerRank}}</button>
     <br />
-    <span style="font-size:200%;"><em>Wins/Loses/Ties: </em></span><span style="font-size:250%">{{totalWins}}/{{totalLoses}}/{{totalTies}}</span>
+    <span style="font-size:200%;"><em><span style="color:springgreen;">Wins</span>/<span style="color:red;">Loses</span>/Ties: </em></span><span style="font-size:250%"><span style="color:springgreen;">{{totalWins}}</span>/<span style="color:red;">{{totalLoses}}</span>/{{totalTies}}</span>
     <br />
     <span style="font-size:200%;"><em>Win rate: </em></span><span style="font-size:250%">{{winPercent}}%</span>
     <div>&nbsp;</div>
