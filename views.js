@@ -20,6 +20,12 @@ myApp.config(['$routeProvider', '$locationProvider',
         controllerAs: 'loginCtrl'
         	
       })
+      .when('/gameId/:gameId', {
+        templateUrl: 'login.html',
+        controller: 'loginCtrl',
+        controllerAs: 'loginCtrl'
+        	
+      })
       .when('/index.html', {
         templateUrl: 'login.html',
         controller: 'loginCtrl'
@@ -132,9 +138,19 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   }
 
   function getGames() {
-    sendServerMessage('GET_GAMES', [{
+  	if($routeParams.gameId){
+  		$rootScope.gameId = $routeParams.gameId;
+  	}
+  	if($rootScope.gameId){
+  		sendServerMessage('GET_GAMES', [{
+      getGames: { gameId: $rootScope.gameId }
+      }]);
+  	}
+  	else{
+  		sendServerMessage('GET_GAMES', [{
       getGames: { gameId: "5207025210359808" }
-    }]);
+      }]);
+  	}
   }
 
   function updateGameList(obj) {
