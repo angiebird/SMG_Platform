@@ -148,7 +148,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
   	}
   	else{
   		sendServerMessage('GET_GAMES', [{
-      getGames: { gameId: "5207025210359808" }
+        getGames: { gameId: "5207025210359808" }
       }]);
   	}
   }
@@ -281,31 +281,46 @@ myApp.controller('modeCtrl', function($routeParams, $location, $scope, $interval
   };
   function matchInfoForDisplay(){
   	var i ;
-  	var currentMatchInfo =[];
-  	for(i = 0; i < theMatchList.length; i++){
-  		var matchInfoObj
-  		if (theMatchList[i].playersInfo[1]){
-  			matchInfoObj = {
-  								 infoString : theMatchList[i].playersInfo[0].displayName + " vs " + theMatchList[i].playersInfo[1].displayName + " on move " + theMatchList[i].history.moves.length,
-  								 joinable : true,
-  								 matchId : theMatchList[i].matchId,
-  								 idx : i
-  								}
-  		}
-  		else if(!theMatchList[i].playersInfo[1]){
-  			matchInfoObj = {
-  								 infoString : theMatchList[i].playersInfo[0].displayName + " is awaiting.",
-  								 joinable : true,
-  								 matchId : theMatchList[i].matchId,
-  								 idx : i
-  								}
-  		}
-  		currentMatchInfo.push(matchInfoObj);
+  	var currentMatchInfo = [];
+  	for (i = 0; i < theMatchList.length; i++) {
+  	    if (theMatchList[i] != null)
+  	    {
+  	        var matchInfoObj
+  	        if (theMatchList[i].playersInfo[1]) {
+  	            matchInfoObj = {
+  	                infoString: theMatchList[i].playersInfo[0].displayName + " vs " + theMatchList[i].playersInfo[1].displayName + " on move " + theMatchList[i].history.moves.length,
+  	                joinable: true,
+  	                matchId: theMatchList[i].matchId,
+  	                idx: i
+  	            }
+  	        }
+  	        else if (!theMatchList[i].playersInfo[1]) {
+  	            matchInfoObj = {
+  	                infoString: theMatchList[i].playersInfo[0].displayName + " is awaiting.",
+  	                joinable: true,
+  	                matchId: theMatchList[i].matchId,
+  	                idx: i
+  	            }
+  	        }
+  	        currentMatchInfo.push(matchInfoObj);
+  	    }
+  	        
   	}
+  	
   	$scope.myMatchStrings = currentMatchInfo;
   }
   function updateMatchList(resObj){
   	theMatchList = resObj[0].matches;
+
+    // Filter out the matches that has already ended
+  	for (var i = theMatchList.length - 1; i >= 0; i--)
+  	{
+  	    if (theMatchList[i].endMatchReason)
+  	    {
+  	        delete theMatchList[i];
+  	    }
+  	}
+   
   	matchInfoForDisplay();
   };
   
