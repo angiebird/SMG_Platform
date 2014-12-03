@@ -1,17 +1,16 @@
 <div class="startDiv">
 	<div style="position:relative;top:10%;display:block;">
-    <div ><img class="centerItem" ng-src={{playerInfo.avatarImageUrl}} alt="HTML5 Icon" width="30%" height="30%"></div>
+    <div><img class="centerItem" ng-src="title.png" alt="HTML5 Icon" width="70%" height="70%" /></div>
     <br />
-    <div class="centerItem" style="position:relative;width:50%;height:10%;text-align:center;">
-    	<input type = "text" style="width:100%;height:100%;font-size:15px;" value="{{playerInfo.displayName}}"></input>
+    <div ><img class="centerItem" ng-src={{playerInfo.avatarImageUrl}} alt="HTML5 Icon" width="20%" height="20%"></div>
+    <br />
+    <div class="centerItem" style="position:relative;width:50%;height:10%;text-align:center;font-size:150%">
+        Playing as <span style="font-size:200%"><strong>{{playerInfo.displayName}}</strong></span>
     </div>
-    <br />
     <br />
 	<div><button class="btn btn-primary centerItem" ng-click="guestLogin()" style="width:50%;height:15%;font-size:80%;">Login With Another Account</button></div>
 	<br />
-    <div class="centerItem" style="position:relative;width:50%;height:10%;text-align:center;">
-    	<input type = "text" style="width:100%;height:100%;font-size:15px;" value="{{gameName}}"></input>
-    </div>
+
     <br />
     <br />
     	<div class="centerItem" style="width:70%">
