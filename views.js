@@ -88,6 +88,8 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
 
   $scope.gotoGame = function (playMode) {
     interComService.setPlayMode(playMode);
+    var obj = {};
+    interComService.setMatch(obj);
     $location.path('game');
   };
   
