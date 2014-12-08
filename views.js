@@ -466,39 +466,10 @@ myApp.controller('gameCtrl',
     }
 
     function isEqual(object1, object2) {
-      var obj1Str = JSON.stringify(object1);
-      var obj2Str = JSON.stringify(object2);
-      return obj1Str === obj2Str;
+    	return angular.equals(object1, object2);
     }
 
-    function formatMoveObject(obj) {
-      var moveObj = [];
-      if (obj.length === 3) {
-        if (obj[0].setTurn !== undefined && obj[1].set !== undefined && obj[2].set !== undefined) {
-          moveObj.push({
-            setTurn: {
-              turnIndex: obj[0].setTurn.turnIndex
-            }
-          });
-          moveObj.push({
-            set: {
-              key: "board",
-              value: obj[1].set.value
-            }
-          });
-          moveObj.push({
-            set: {
-              key: "delta",
-              value: obj[2].set.value
-            }
-          });
-          return moveObj
-        }
-      }
-      return false;
-    }
-
-    function formatStateObject(obj, lastObj){
+    function formatStateObject(obj, currState, prevState){
       var stateObj;
       var indexBefore;
       var indexAfter;
@@ -510,10 +481,13 @@ myApp.controller('gameCtrl',
           indexBefore = 1;
           indexAfter = 0;
         }
+        var cState = currState;
+        /*
         var cState = {
           board: obj[1].set.value,
           delta: obj[2].set.value
         };
+        */
         stateObj = {
           turnIndexBeforeMove: indexBefore,
           turnIndex: indexAfter,
@@ -523,11 +497,14 @@ myApp.controller('gameCtrl',
           lastVisibleTo: {},
           currentVisibleTo: {}
         };
-        if(lastObj){
+        if(prevState){
+        	var lState = prevState;
+        	/*
           var lState = {
             board: lastObj[1].set.value,
             delta: lastObj[2].set.value
           };
+          */
           stateObj.lastState = lState;
         }
         myLastState = cState;
@@ -537,10 +514,13 @@ myApp.controller('gameCtrl',
         if (myTurnIndex === 0) {
           var indexBeforeMove = 1;
         }
+        var cState = currState;
+        /*
         var cState = {
           board: obj[1].set.value,
           delta: obj[2].set.value
         };
+        */
         stateObj = {
           turnIndexBeforeMove: indexBeforeMove,
           turnIndex: myTurnIndex,
@@ -574,8 +554,17 @@ myApp.controller('gameCtrl',
         if (myMatchId !== matchObj.matchId) {
           myMatchId = matchObj.matchId;
         }
-        if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(matchObj.newMatch.move))) {
-          stateService.gotBroadcastUpdateUi(formatStateObject(matchObj.newMatch.move), null);
+        if (myLastMove === undefined || !isEqual(myLastMove, matchObj.newMatch.move)) {
+          var movesObj = matchObj.history.moves;
+          var stateObj = matchObj.history.stateAfterMoves;
+          var data;
+          if(stateObj.length >= 2){
+            data = formatStateObject(movesObj[movesObj.length - 1], stateObj[stateObj.length - 1], stateObj[stateObj.length-2]);
+          }
+          else{
+            data = formatStateObject(movesObj[movesObj.length - 1], stateObj[stateObj.length - 1], null);
+          }
+          stateService.gotBroadcastUpdateUi(data);
         }
         theMatch = matchObj;
         interComService.setMatch(theMatch);
@@ -590,18 +579,19 @@ myApp.controller('gameCtrl',
         for (i = 0; i < matchObj.length; i++) {
           if (myMatchId === matchObj[i].matchId) {
             var movesObj = matchObj[i].history.moves;
+            var stateObj = matchObj[i].history.stateAfterMoves;
             numOfMove = movesObj.length-1;
             theMatch = matchObj[i];
             interComService.setMatch(theMatch);
             updateOpponent();
-            if (myLastMove === undefined || !isEqual(formatMoveObject(myLastMove), formatMoveObject(movesObj[movesObj.length - 1]))) {
+            if (myLastMove === undefined || !isEqual(myLastMove, movesObj[movesObj.length - 1])) {
             	var data;
-              if(movesObj.length >= 2){
-                data = formatStateObject(movesObj[movesObj.length - 1], movesObj[movesObj.length - 2]);
-              }
-              else{
-                data = formatStateObject(movesObj[movesObj.length - 1], null);
-              }
+            	if(stateObj.length >= 2){
+            	  data = formatStateObject(movesObj[movesObj.length - 1], stateObj[stateObj.length - 1], stateObj[stateObj.length-2]);
+            	}
+            	else{
+            	  data = formatStateObject(movesObj[movesObj.length - 1], stateObj[stateObj.length - 1], null);
+            	}
               stateService.gotBroadcastUpdateUi(data);
               myLastMove = movesObj[movesObj.length - 1];
             }
