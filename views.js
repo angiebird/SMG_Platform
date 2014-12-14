@@ -368,6 +368,7 @@ myApp.controller('gameCtrl',
     $scope.avatarImageUrl = thePlayer.avatarImageUrl;
     $scope.thePlayer = angular.toJson(thePlayer);
     $scope.theGame = angular.toJson(theGame);
+    $rootScope.regid;
     var myLastMove;
     var myTurnIndex = 0;
     var numOfMove = 0;
@@ -485,7 +486,9 @@ myApp.controller('gameCtrl',
         handleUpdates(resObj);
       } else if (type === 'NEW_MATCH' || type === 'RESERVE_MATCH') {
         handleResAutoMatch(resObj);
-      } 
+      } else if (type === 'REGISTER_DEVICE') {
+          $info.log("Device Registered");
+      }
     }
 
     function isEqual(object1, object2) {
@@ -709,6 +712,107 @@ myApp.controller('gameCtrl',
       sendServerMessage('DISMISS_MATCH', dismissObj);
       $location.path('/');
     }
+
+
+    // register the current device with regid with serverApi
+    function registerDevice() {
+        var thePlayer = interComService.getUser();
+        var regObj = [{
+            registerForPushNotifications: {
+                myPlayerId: thePlayer.myPlayerId,
+                accessSignature: thePlayer.accessSignature,
+                gameId: interComService.getGame().gameId,
+                registrationId: $rootScope.regid,
+                platformType: "ANDROID"
+            }
+        }];
+        sendServerMessage('REGISTER_DEVICE', regObj);
+    }
+
+    // Handles the pushed notifications from servers
+    function successHandler (result) {
+      $log.info('result = ' + result);
+    }
+    function errorHandler (error) {
+      $log.info('error = ' + error);
+    }
+    function registerForPushNotification() {
+      $log.info('registerForPushNotification for cordova.platformId:' + cordova.platformId);
+      var pushNotification = window.plugins.pushNotification;
+      if ( cordova.platformId == 'android' || cordova.platformId == 'Android' || cordova.platformId == "amazon-fireos" ){
+        pushNotification.register(
+          successHandler,
+          errorHandler,
+          {
+              "senderID":"24803504516",
+              "ecb":"onNotification"
+          });
+      } else {
+        pushNotification.register(
+          tokenHandler,
+          errorHandler,
+          {
+              "badge":"true",
+              "sound":"true",
+              "alert":"true",
+              "ecb":"onNotificationAPN"
+          });
+      }
+    }
+    // iOS
+    window.onNotificationAPN = function (event) {
+      alert('RECEIVED:' + JSON.stringify(event));
+      if ( event.alert )
+      {
+          navigator.notification.alert(event.alert);
+      }
+      if ( event.sound )
+      {
+          var snd = new Media(event.sound);
+          snd.play();
+      }
+      if ( event.badge )
+      {
+          window.plugins.pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
+      }
+    }
+    function tokenHandler(result) {
+      // Your iOS push server needs to know the token before it can push to this device
+      // here is where you might want to send it the token for later use.
+      alert('device token = ' + result);
+      document.getElementById("regIdTextarea").value = result;
+    }
+    // Android and Amazon Fire OS
+    window.onNotification = function (e) {
+      $log.info('RECEIVED:' + JSON.stringify(e));
+      switch( e.event )
+      {
+        case 'registered':
+          if ( e.regid.length > 0 )
+          {
+            // Your GCM push server needs to know the regID before it can push to this device
+            $log.info('REGID:' + e.regid);
+            window.regid = e.regid;
+            $rootScope.regid = e.regid;
+            registerDevice();
+          }
+        break;
+          case 'message':
+            $log.info('A MESSAGE NOTIFICATION IS RECEIVED!!!');
+            checkGameUpdates();
+          // if this flag is set, this notification happened while we were in the foreground.
+          // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+          // e.foreground , e.coldstart          // e.soundname || e.payload.sound
+          // e.payload.message
+          // e.payload.msgcnt
+          // e.payload.timeStamp
+        break;
+        case 'error':
+          // e.msg
+        break;
+      }
+    }
+    document.addEventListener("deviceready", registerForPushNotification, false);
 
   });
 
