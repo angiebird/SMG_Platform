@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <widget xmlns   = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
-        id          = "com.gaming_platform.Platform"
+        id          = "com.gomoku_online.gomoku"
         versionCode = "7"
         version     = "1.0.0" >
 
-    <name>Gaming Platform</name>
+    <name>Gomoku Online</name>
 
     <description>
-        A multiplayer game platform.
+        An online, player vs player or player vs computer gomoku game.
     </description>
 
     <author href="www.nyu.edu" email="AUTHOR_NAME@gmail.com">
@@ -40,7 +40,6 @@
     <preference name="android-installLocation"    value="auto" />           <!-- android: app install location. 'auto' will choose. 'internalOnly' is device memory. 'preferExternal' is SDCard. -->
 
     <icon src="icon.png" />
-    <gap:splash src="icon.png" />
 
     <!--
         Define access to external domains.

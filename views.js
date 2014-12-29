@@ -148,7 +148,7 @@ myApp.controller('loginCtrl', function($routeParams, $location, $interval, $scop
     ];
     sendServerMessage('FB_LOGIN', obj);
   }
-
+  
   function guestLogin() {
     var avatarLs = ["bat", "devil", "mike", "scream", "squash"];
     var rand = Math.floor(Math.random() * 5);
@@ -646,6 +646,19 @@ myApp.controller('gameCtrl',
         var i;
         for (i = 0; i < matchObj.length; i++) {
           if (myMatchId === matchObj[i].matchId) {
+          	if (matchObj[i].endMatchReason && matchObj[i].endMatchReason === 'DISMISSED' && matchObj[i].endMatchScores){
+          		var movesObj = [{endMatch: {endMatchScores: matchObj[i].endMatchScores}}];
+          		var stateObj = matchObj[i].history.stateAfterMoves;
+          		var data;
+          		if(stateObj.length >= 2){
+            		data = formatStateObject(movesObj, stateObj[stateObj.length - 1], stateObj[stateObj.length-2]);
+          		}
+          		else{
+            		data = formatStateObject(movesObj, stateObj[stateObj.length - 1], null);
+          		}
+          		stateService.gotBroadcastUpdateUi(data);
+          	}
+          else{
             var movesObj = matchObj[i].history.moves;
             var stateObj = matchObj[i].history.stateAfterMoves;
             numOfMove = movesObj.length-1;
@@ -662,6 +675,7 @@ myApp.controller('gameCtrl',
             	}
               stateService.gotBroadcastUpdateUi(data);
               myLastMove = movesObj[movesObj.length - 1];
+            }
             }
           }
         }
@@ -696,7 +710,7 @@ myApp.controller('gameCtrl',
           }
         } else if (message.isMoveOkResult !== undefined) {
           if (message.isMoveOkResult !== true) {
-            $window.alert("isMoveOk returned " + message.isMoveOkResult);
+            //$window.alert("isMoveOk returned " + message.isMoveOkResult);
           }
         } else if (message.makeMove !== undefined) {
           stateService.makeMove(message.makeMove);

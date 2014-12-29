@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <widget xmlns   = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
-        id          = "com.gaming_platform.Platform"
+        id          = "com.gomoku_online.gomoku"
         versionCode = "7"
         version     = "1.0.0" >
 
-    <name>Gaming Platform</name>
+    <name>GomokuOnline</name>
 
     <description>
-        A multiplayer game platform.
+        An online player vs player/player vs AI Gomoku Game
     </description>
 
     <author href="www.nyu.edu" email="AUTHOR_NAME@gmail.com">
@@ -40,7 +40,6 @@
     <preference name="android-installLocation"    value="auto" />           <!-- android: app install location. 'auto' will choose. 'internalOnly' is device memory. 'preferExternal' is SDCard. -->
 
     <icon src="icon.png" />
-    <gap:splash src="icon.png" />
 
     <!--
         Define access to external domains.
@@ -49,7 +48,8 @@
         Otherwise, you can specify specific domains:
     -->
     <access origin="*"/>
-
-    <gap:plugin name="com.phonegap.plugins.pushplugin" version="2.4.0" />
-
+    <gap:plugin name="com.phonegap.plugins.facebookconnect" version="0.9.0">
+        <param name="APP_ID" value="401677156646628" />
+        <param name="APP_NAME" value="Gomoku Online" />
+    </gap:plugin>
 </widget>
