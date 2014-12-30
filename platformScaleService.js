@@ -24,11 +24,12 @@ angular.module('myApp')
       if (gameSize === null) {
         return;
       }
+      var myFrame = document.getElementById("game_iframe");
       var myGameWidth = gameSize.width;
       var myGameHeight = gameSize.height;
       var windowWidth = $window.innerWidth;
       var windowHeight = $window.innerHeight;
-      if(windowHeight < 528){
+      if(windowHeight < 528 && !myFrame){
       	windowHeight = 528;
       	/*
       	if (windowWidth > windowHeight){
@@ -103,19 +104,16 @@ angular.module('myApp')
       		dismissBt.style.top = "105%";
       	}
       }
-      /*
-      gameContent.style['transform'] = transformString;
-      gameContent.style['-o-transform'] = transformString;
-      gameContent.style['-webkit-transform'] = transformString;
-      gameContent.style['-moz-transform'] = transformString;
-      gameContent.style['-ms-transform'] = transformString;
-      var transformOriginString = "top left";
-      gameContent.style['transform-origin'] = transformOriginString;
-      gameContent.style['-o-transform-origin'] = transformOriginString;
-      gameContent.style['-webkit-transform-origin'] = transformOriginString;
-      gameContent.style['-moz-transform-origin'] = transformOriginString;
-      gameContent.style['-ms-transform-origin'] = transformOriginString;
-      */
+      if (myFrame) {
+      	if ($window.innerWidth > $window.innerHeight){
+      		myFrame.style.width = (gameSize.height*scale).toString() + "px";
+      		myFrame.style.height = (gameSize.height*scale).toString() + "px";
+      		}
+      	else{
+      		myFrame.style.width = (gameSize.width*scale).toString() + "px";
+      		myFrame.style.height = (gameSize.width*scale).toString() + "px";
+      	}
+      }
     }
 	function startScaleService(){
 		autoService = setInterval(rescale, 1000);
